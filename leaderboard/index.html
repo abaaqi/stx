@@ -1,240 +1,678 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STEM Expo 2026 — Live Leaderboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink:#0a1f2e; --ink-soft:#33505f; --paper:#f3efe4; --panel:#ffffff;
-    --line:#d8d2c2; --grid:#cde3ec; --cyan:#0c8ca6; --cyan-deep:#076478;
-    --amber:#e8821a; --amber-soft:#fbe9d2; --green:#1f9d6b; --green-soft:#dcf2e8;
-    --red:#c4453b; --gold:#caa53d; --silver:#9aa4ab; --bronze:#b9844f;
-    --shadow:0 1px 0 rgba(10,31,46,.04), 0 8px 26px -14px rgba(10,31,46,.28);
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    background:
-      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/26px 26px,
-      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/26px 26px,
-      var(--paper);
-    background-blend-mode:multiply; color:var(--ink); line-height:1.5; -webkit-font-smoothing:antialiased;
-  }
-  h1,h2,h3{font-family:"Space Grotesk",sans-serif}
-  .mono{font-family:"JetBrains Mono",monospace}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STEM Expo 2026 — Live Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #0a1f2e;
+        --ink-soft: #33505f;
+        --paper: #f3efe4;
+        --panel: #ffffff;
+        --line: #d8d2c2;
+        --grid: #cde3ec;
+        --cyan: #0c8ca6;
+        --cyan-deep: #076478;
+        --amber: #e8821a;
+        --amber-soft: #fbe9d2;
+        --green: #1f9d6b;
+        --green-soft: #dcf2e8;
+        --red: #c4453b;
+        --gold: #caa53d;
+        --silver: #9aa4ab;
+        --bronze: #b9844f;
+        --shadow:
+          0 1px 0 rgba(10, 31, 46, 0.04),
+          0 8px 26px -14px rgba(10, 31, 46, 0.28);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family:
+          "DM Sans",
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/26px 26px,
+          var(--paper);
+        background-blend-mode: multiply;
+        color: var(--ink);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
 
-  header{border-bottom:2px solid var(--ink);background:rgba(243,239,228,.9);position:sticky;top:0;z-index:20}
-  .head-inner{max-width:1100px;margin:0 auto;padding:16px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-  .badge{display:grid;place-items:center;width:48px;height:48px;flex:0 0 auto;border:2px solid var(--ink);border-radius:11px;background:var(--ink);color:var(--paper);font-family:"Space Grotesk";font-weight:700;font-size:20px;position:relative}
-  .badge::after{content:"";position:absolute;inset:5px;border:1px solid rgba(243,239,228,.35);border-radius:6px}
-  .title-block h1{margin:0;font-size:22px;letter-spacing:-.01em;line-height:1.1}
-  .title-block p{margin:1px 0 0;font-size:13px;color:var(--ink-soft)}
-  .head-spacer{flex:1}
-  .live-pill{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--cyan-deep);border:1.5px solid var(--cyan);border-radius:999px;padding:6px 13px;background:#fff}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,157,107,.55)}70%{box-shadow:0 0 0 9px rgba(31,157,107,0)}100%{box-shadow:0 0 0 0 rgba(31,157,107,0)}}
+      header {
+        border-bottom: 2px solid var(--ink);
+        background: rgba(243, 239, 228, 0.9);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .head-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px 22px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .badge {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        flex: 0 0 auto;
+        border: 2px solid var(--ink);
+        border-radius: 11px;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: "Space Grotesk";
+        font-weight: 700;
+        font-size: 20px;
+        position: relative;
+      }
+      .badge::after {
+        content: "";
+        position: absolute;
+        inset: 5px;
+        border: 1px solid rgba(243, 239, 228, 0.35);
+        border-radius: 6px;
+      }
+      .title-block h1 {
+        margin: 0;
+        font-size: 22px;
+        letter-spacing: -0.01em;
+        line-height: 1.1;
+      }
+      .title-block p {
+        margin: 1px 0 0;
+        font-size: 13px;
+        color: var(--ink-soft);
+      }
+      .head-spacer {
+        flex: 1;
+      }
+      .live-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--cyan-deep);
+        border: 1.5px solid var(--cyan);
+        border-radius: 999px;
+        padding: 6px 13px;
+        background: #fff;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        animation: pulse 1.8s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(31, 157, 107, 0.55);
+        }
+        70% {
+          box-shadow: 0 0 0 9px rgba(31, 157, 107, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(31, 157, 107, 0);
+        }
+      }
 
-  main{max-width:1100px;margin:0 auto;padding:28px 22px 80px}
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 28px 22px 80px;
+      }
 
-  .eyebrow{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--cyan-deep)}
-  .sec-head{margin-bottom:18px}
-  .sec-head h2{margin:6px 0 0;font-size:28px;letter-spacing:-.015em}
-  .sec-head .sub{font-size:13.5px;color:var(--ink-soft);margin-top:4px}
+      .eyebrow {
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--cyan-deep);
+      }
+      .sec-head {
+        margin-bottom: 18px;
+      }
+      .sec-head h2 {
+        margin: 6px 0 0;
+        font-size: 28px;
+        letter-spacing: -0.015em;
+      }
+      .sec-head .sub {
+        font-size: 13.5px;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
 
-  label.fld{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
-  select{font-family:"DM Sans";font-size:15px;color:var(--ink);border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;background:#fff;min-width:200px}
-  select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(12,140,166,.16)}
-  .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px}
-  .chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.03em;border:1.5px solid}
-  .chip.cyan{color:var(--cyan-deep);border-color:var(--cyan);background:#e7f5f8}
-  .chip.amber{color:#7a4500;border-color:var(--amber);background:var(--amber-soft)}
-  .chip.green{color:#0c6a45;border-color:var(--green);background:var(--green-soft)}
-  .chip.gray{color:var(--ink-soft);border-color:var(--line);background:#fff}
+      label.fld {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
+      select {
+        font-family: "DM Sans";
+        font-size: 15px;
+        color: var(--ink);
+        border: 1.5px solid var(--line);
+        border-radius: 9px;
+        padding: 10px 12px;
+        background: #fff;
+        min-width: 200px;
+      }
+      select:focus {
+        outline: none;
+        border-color: var(--cyan);
+        box-shadow: 0 0 0 3px rgba(12, 140, 166, 0.16);
+      }
+      .controls {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 20px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 999px;
+        letter-spacing: 0.03em;
+        border: 1.5px solid;
+      }
+      .chip.cyan {
+        color: var(--cyan-deep);
+        border-color: var(--cyan);
+        background: #e7f5f8;
+      }
+      .chip.amber {
+        color: #7a4500;
+        border-color: var(--amber);
+        background: var(--amber-soft);
+      }
+      .chip.green {
+        color: #0c6a45;
+        border-color: var(--green);
+        background: var(--green-soft);
+      }
+      .chip.gray {
+        color: var(--ink-soft);
+        border-color: var(--line);
+        background: #fff;
+      }
 
-  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px}
-  .stat{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
-  .stat .n{font-family:"Space Grotesk";font-weight:700;font-size:30px;line-height:1}
-  .stat .l{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);margin-top:5px}
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      .stat {
+        background: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 12px;
+        padding: 14px 16px;
+        box-shadow: var(--shadow);
+      }
+      .stat .n {
+        font-family: "Space Grotesk";
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 1;
+      }
+      .stat .l {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--ink-soft);
+        margin-top: 5px;
+      }
 
-  .board{display:flex;flex-direction:column;gap:11px}
-  .lb-row{display:grid;grid-template-columns:58px 1fr auto;align-items:center;gap:14px;background:#fff;border:2px solid var(--ink);border-radius:13px;padding:14px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-  .rankwrap{display:flex;align-items:center;justify-content:center}
-  .ranknum{font-family:"Space Grotesk";font-weight:700;font-size:24px;width:46px;height:46px;display:grid;place-items:center;border-radius:11px;border:2px solid var(--ink);background:var(--paper)}
-  .lb-row.r1 .ranknum{background:var(--gold);border-color:#9c7e1f;color:#3a2c00}
-  .lb-row.r2 .ranknum{background:var(--silver);border-color:#6f797f;color:#1d2429}
-  .lb-row.r3 .ranknum{background:var(--bronze);border-color:#8a5f37;color:#2e1a08}
-  .lb-row.r1{border-color:#9c7e1f}
-  .team-name{font-family:"Space Grotesk";font-weight:600;font-size:18px;letter-spacing:-.01em}
-  .team-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
-  .score-cell{text-align:right;min-width:130px}
-  .score-num{font-family:"Space Grotesk";font-weight:700;font-size:28px;letter-spacing:-.02em;line-height:1}
-  .score-num small{font-size:15px;color:var(--ink-soft);font-weight:500}
-  .score-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin-top:4px}
-  .locked .score-num{color:var(--ink-soft)}
-  .prog{height:6px;border-radius:4px;background:var(--paper);border:1px solid var(--line);overflow:hidden;margin-top:9px;width:100%}
-  .prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--cyan-deep))}
+      .board {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+      }
+      .lb-row {
+        display: grid;
+        grid-template-columns: 58px 1fr auto;
+        align-items: center;
+        gap: 14px;
+        background: #fff;
+        border: 2px solid var(--ink);
+        border-radius: 13px;
+        padding: 14px 18px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .rankwrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ranknum {
+        font-family: "Space Grotesk";
+        font-weight: 700;
+        font-size: 24px;
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 11px;
+        border: 2px solid var(--ink);
+        background: var(--paper);
+      }
+      .lb-row.r1 .ranknum {
+        background: var(--gold);
+        border-color: #9c7e1f;
+        color: #3a2c00;
+      }
+      .lb-row.r2 .ranknum {
+        background: var(--silver);
+        border-color: #6f797f;
+        color: #1d2429;
+      }
+      .lb-row.r3 .ranknum {
+        background: var(--bronze);
+        border-color: #8a5f37;
+        color: #2e1a08;
+      }
+      .lb-row.r1 {
+        border-color: #9c7e1f;
+      }
+      .team-name {
+        font-family: "Space Grotesk";
+        font-weight: 600;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+      }
+      .team-meta {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin-top: 6px;
+      }
+      .score-cell {
+        text-align: right;
+        min-width: 130px;
+      }
+      .score-num {
+        font-family: "Space Grotesk";
+        font-weight: 700;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+        line-height: 1;
+      }
+      .score-num small {
+        font-size: 15px;
+        color: var(--ink-soft);
+        font-weight: 500;
+      }
+      .score-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ink-soft);
+        margin-top: 4px;
+      }
+      .locked .score-num {
+        color: var(--ink-soft);
+      }
+      .prog {
+        height: 6px;
+        border-radius: 4px;
+        background: var(--paper);
+        border: 1px solid var(--line);
+        overflow: hidden;
+        margin-top: 9px;
+        width: 100%;
+      }
+      .prog > i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--cyan), var(--cyan-deep));
+      }
 
-  .empty{border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;color:var(--ink-soft);font-size:15px;background:rgba(255,255,255,.5)}
-  .foot{margin-top:26px;text-align:center;font-size:12.5px;color:var(--ink-soft)}
-  .config-warn{background:#fff4f3;border:1.5px solid var(--red);color:#7a1f18;border-radius:12px;padding:16px 18px;font-size:14px;max-width:560px;margin:60px auto}
-  .config-warn b{color:var(--red)}
-  .mono{font-family:"JetBrains Mono",monospace}
+      .empty {
+        border: 2px dashed var(--line);
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        color: var(--ink-soft);
+        font-size: 15px;
+        background: rgba(255, 255, 255, 0.5);
+      }
+      .foot {
+        margin-top: 26px;
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--ink-soft);
+      }
+      .config-warn {
+        background: #fff4f3;
+        border: 1.5px solid var(--red);
+        color: #7a1f18;
+        border-radius: 12px;
+        padding: 16px 18px;
+        font-size: 14px;
+        max-width: 560px;
+        margin: 60px auto;
+      }
+      .config-warn b {
+        color: var(--red);
+      }
+      .mono {
+        font-family: "JetBrains Mono", monospace;
+      }
 
-  @media(max-width:560px){
-    .lb-row{grid-template-columns:48px 1fr}
-    .score-cell{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:11px;margin-top:4px}
-  }
-</style>
-</head>
-<body>
-<header>
-  <div class="head-inner">
-    <div class="badge">SX</div>
-    <div class="title-block">
-      <h1>STEM Expo 2026</h1>
-      <p>Live Public Leaderboard</p>
-    </div>
-    <div class="head-spacer"></div>
-    <span class="live-pill"><span class="dot"></span> Live</span>
-  </div>
-</header>
+      @media (max-width: 560px) {
+        .lb-row {
+          grid-template-columns: 48px 1fr;
+        }
+        .score-cell {
+          grid-column: 1/-1;
+          text-align: left;
+          border-top: 1px solid var(--line);
+          padding-top: 11px;
+          margin-top: 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="head-inner">
+        <div class="badge">SX</div>
+        <div class="title-block">
+          <h1>STEM Expo 2026</h1>
+          <p>Live Public Leaderboard</p>
+        </div>
+        <div class="head-spacer"></div>
+        <span class="live-pill"><span class="dot"></span> Live</span>
+      </div>
+    </header>
 
-<main>
-  <div id="configWarn" class="config-warn" style="display:none">
-    <b>Not connected yet.</b> Paste your Supabase URL and anon key into the
-    <span class="mono">SUPABASE_URL</span> / <span class="mono">SUPABASE_ANON_KEY</span>
-    values near the top of this file's script, then re-upload. (Same values as your main app.)
-  </div>
+    <main>
+      <div id="configWarn" class="config-warn" style="display: none">
+        <b>Not connected yet.</b> Paste your Supabase URL and anon key into the
+        <span class="mono">SUPABASE_URL</span> /
+        <span class="mono">SUPABASE_ANON_KEY</span>
+        values near the top of this file's script, then re-upload. (Same values
+        as your main app.)
+      </div>
 
-  <div id="content" style="display:none">
-    <div class="sec-head">
-      <div class="eyebrow">Standings</div>
-      <h2>Live Leaderboard</h2>
-      <div class="sub">Scores appear once every assigned judge has scored a team. Updates automatically.</div>
-    </div>
+      <div id="content" style="display: none">
+        <div class="sec-head">
+          <div class="eyebrow">Standings</div>
+          <h2>Live Leaderboard</h2>
+          <div class="sub">
+            Scores appear once every assigned judge has scored a team. Updates
+            automatically.
+          </div>
+        </div>
 
-    <div class="stats" id="stats"></div>
+        <div class="stats" id="stats"></div>
 
-    <div class="controls">
-      <label class="fld">Category<select id="lbCategory"></select></label>
-      <label class="fld">Activity / Track<select id="lbActivity"></select></label>
-      <div style="flex:1"></div>
-      <span class="chip cyan" id="countChip">0 teams</span>
-    </div>
+        <div class="controls">
+          <label class="fld">Category<select id="lbCategory"></select></label>
+          <label class="fld"
+            >Activity / Track<select id="lbActivity"></select
+          ></label>
+          <div style="flex: 1"></div>
+          <span class="chip cyan" id="countChip">0 teams</span>
+        </div>
 
-    <div class="board" id="board"></div>
-    <div class="foot" id="foot"></div>
-  </div>
-</main>
+        <div class="board" id="board"></div>
+        <div class="foot" id="foot"></div>
+      </div>
+    </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-/* ============================================================
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      /* ============================================================
    ⬇⬇⬇  PASTE YOUR SUPABASE CREDENTIALS HERE  ⬇⬇⬇
    Use the SAME two values as your main scoring app.
    Supabase → Project Settings → API Keys (Project URL + anon key)
    ============================================================ */
-const SUPABASE_URL      = "YOUR_SUPABASE_URL_HERE";
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
-/* ============================================================ */
+      const SUPABASE_URL = "https://gibvfxypvuczirgtkasv.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdpYnZmeHlwdnVjemlyZ3RrYXN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzNDI2NDcsImV4cCI6MjA5NzkxODY0N30.jGWCFmB4VjjL8k1F2nqnRBIbZY68ECJ2RqajShHHs-0";
+      /* ============================================================ */
 
-const CONFIGURED = !/YOUR_SUPABASE/.test(SUPABASE_URL+SUPABASE_ANON_KEY);
+      const CONFIGURED = !/YOUR_SUPABASE/.test(
+        SUPABASE_URL + SUPABASE_ANON_KEY,
+      );
 
-/* ---- The same rubric labels, so the dropdowns read nicely ---- */
-const RUBRICS = {
-  PRE:{ label:"Preschool", activities:{
-    project:{name:"Project-Based Activity",total:50},
-    beebot:{name:"Bee-Bot Coding Competition",total:50},
-    lego:{name:"LEGO Coupling Challenge",total:50},
-    rubik:{name:"Face-Changing Rubik Challenge",total:50},
-    wizbot:{name:"Destination Challenge (WizBot)",total:50},
-    numpuzzle:{name:"Number Puzzle Challenge",total:50}
-  }},
-  LP:{ label:"Lower Primary", activities:primaryTracks(["techpreneurship","abacus"]) },
-  UP:{ label:"Upper Primary", activities:primaryTracks(["techpreneurship","abacus","maze"]) },
-  JS:{ label:"Junior Secondary", activities:primaryTracks(["techpreneurship","abacus","robosoccer"]) },
-  SS:{ label:"Senior Secondary", activities:primaryTracks(["adv_techpreneurship"]) }
-};
-function primaryTracks(keys){
-  const names={techpreneurship:"Techpreneurship Track",adv_techpreneurship:"Advanced Techpreneurship Track",abacus:"Abacus Mathematics",maze:"Maze Challenge",robosoccer:"Robo Soccer League"};
-  const out={}; keys.forEach(k=>out[k]={name:names[k],total:100}); return out;
-}
-function catList(){ return Object.keys(RUBRICS).map(k=>({key:k,label:RUBRICS[k].label})); }
-function actList(c){ const x=RUBRICS[c]; if(!x) return []; return Object.keys(x.activities).map(k=>({key:k,name:x.activities[k].name,total:x.activities[k].total})); }
-function rubricOf(c,a){ return RUBRICS[c]&&RUBRICS[c].activities[a]; }
+      /* ---- The same rubric labels, so the dropdowns read nicely ---- */
+      const RUBRICS = {
+        PRE: {
+          label: "Preschool",
+          activities: {
+            project: { name: "Project-Based Activity", total: 50 },
+            beebot: { name: "Bee-Bot Coding Competition", total: 50 },
+            lego: { name: "LEGO Coupling Challenge", total: 50 },
+            rubik: { name: "Face-Changing Rubik Challenge", total: 50 },
+            wizbot: { name: "Destination Challenge (WizBot)", total: 50 },
+            numpuzzle: { name: "Number Puzzle Challenge", total: 50 },
+          },
+        },
+        LP: {
+          label: "Lower Primary",
+          activities: primaryTracks(["techpreneurship", "abacus"]),
+        },
+        UP: {
+          label: "Upper Primary",
+          activities: primaryTracks(["techpreneurship", "abacus", "maze"]),
+        },
+        JS: {
+          label: "Junior Secondary",
+          activities: primaryTracks([
+            "techpreneurship",
+            "abacus",
+            "robosoccer",
+          ]),
+        },
+        SS: {
+          label: "Senior Secondary",
+          activities: primaryTracks(["adv_techpreneurship"]),
+        },
+      };
+      function primaryTracks(keys) {
+        const names = {
+          techpreneurship: "Techpreneurship Track",
+          adv_techpreneurship: "Advanced Techpreneurship Track",
+          abacus: "Abacus Mathematics",
+          maze: "Maze Challenge",
+          robosoccer: "Robo Soccer League",
+        };
+        const out = {};
+        keys.forEach((k) => (out[k] = { name: names[k], total: 100 }));
+        return out;
+      }
+      function catList() {
+        return Object.keys(RUBRICS).map((k) => ({
+          key: k,
+          label: RUBRICS[k].label,
+        }));
+      }
+      function actList(c) {
+        const x = RUBRICS[c];
+        if (!x) return [];
+        return Object.keys(x.activities).map((k) => ({
+          key: k,
+          name: x.activities[k].name,
+          total: x.activities[k].total,
+        }));
+      }
+      function rubricOf(c, a) {
+        return RUBRICS[c] && RUBRICS[c].activities[a];
+      }
 
-const $=s=>document.querySelector(s);
-function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
-function fillSelect(sel,items){ if(!sel) return; const cur=sel.value; sel.innerHTML="";
-  items.forEach(it=>{const o=document.createElement("option");o.value=it.key;o.textContent=it.label;sel.appendChild(o);});
-  if([...sel.options].some(o=>o.value===cur)) sel.value=cur; }
+      const $ = (s) => document.querySelector(s);
+      function esc(s) {
+        return String(s == null ? "" : s).replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+      function fillSelect(sel, items) {
+        if (!sel) return;
+        const cur = sel.value;
+        sel.innerHTML = "";
+        items.forEach((it) => {
+          const o = document.createElement("option");
+          o.value = it.key;
+          o.textContent = it.label;
+          sel.appendChild(o);
+        });
+        if ([...sel.options].some((o) => o.value === cur)) sel.value = cur;
+      }
 
-let sb=null, LB=[];
+      let sb = null,
+        LB = [];
 
-async function loadLeaderboard(){
-  const {data,error}=await sb.rpc("leaderboard");
-  LB = error? [] : (data||[]);
-}
+      async function loadLeaderboard() {
+        const { data, error } = await sb.rpc("leaderboard");
+        LB = error ? [] : data || [];
+      }
 
-function render(){
-  const cat=$("#lbCategory").value, act=$("#lbActivity").value;
-  let rows=LB.filter(x=>x.category===cat&&x.activity===act);
-  $("#countChip").textContent=`${rows.length} team${rows.length===1?"":"s"}`;
-  const board=$("#board"); const r=rubricOf(cat,act); const total=r?r.total:100;
-  if(!rows.length){ board.innerHTML=`<div class="empty">No teams in <b>${esc((RUBRICS[cat]||{}).label||"")} → ${esc((r||{}).name||"")}</b> yet.</div>`; renderStats(); return; }
-  const revealed=rows.filter(x=>x.is_complete).sort((a,b)=>b.avg_score-a.avg_score);
-  const pending=rows.filter(x=>!x.is_complete).sort((a,b)=>a.team_name.localeCompare(b.team_name));
-  const ordered=[...revealed,...pending]; board.innerHTML="";
-  ordered.forEach((x,i)=>{
-    const isRev=x.is_complete; const rank=isRev?(i+1):null;
-    const pct=isRev? Math.round(x.avg_score/total*100) : Math.round((x.judges_needed? x.judges_scored/x.judges_needed:0)*100);
-    const scoreCell=isRev
-      ? `<div class="score-num">${Number(x.avg_score).toFixed(2)}<small> / ${total}</small></div><div class="score-label">Final · ${x.judges_scored} judge${x.judges_scored>1?"s":""}</div>`
-      : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${x.judges_scored}/${x.judges_needed||0} judges in</div>`;
-    const row=document.createElement("div"); row.className="lb-row"+(isRev&&rank<=3?` r${rank}`:"")+(isRev?"":" locked");
-    row.innerHTML=`<div class="rankwrap"><div class="ranknum">${isRev?rank:"·"}</div></div>
+      function render() {
+        const cat = $("#lbCategory").value,
+          act = $("#lbActivity").value;
+        let rows = LB.filter((x) => x.category === cat && x.activity === act);
+        $("#countChip").textContent =
+          `${rows.length} team${rows.length === 1 ? "" : "s"}`;
+        const board = $("#board");
+        const r = rubricOf(cat, act);
+        const total = r ? r.total : 100;
+        if (!rows.length) {
+          board.innerHTML = `<div class="empty">No teams in <b>${esc((RUBRICS[cat] || {}).label || "")} → ${esc((r || {}).name || "")}</b> yet.</div>`;
+          renderStats();
+          return;
+        }
+        const revealed = rows
+          .filter((x) => x.is_complete)
+          .sort((a, b) => b.avg_score - a.avg_score);
+        const pending = rows
+          .filter((x) => !x.is_complete)
+          .sort((a, b) => a.team_name.localeCompare(b.team_name));
+        const ordered = [...revealed, ...pending];
+        board.innerHTML = "";
+        ordered.forEach((x, i) => {
+          const isRev = x.is_complete;
+          const rank = isRev ? i + 1 : null;
+          const pct = isRev
+            ? Math.round((x.avg_score / total) * 100)
+            : Math.round(
+                (x.judges_needed ? x.judges_scored / x.judges_needed : 0) * 100,
+              );
+          const scoreCell = isRev
+            ? `<div class="score-num">${Number(x.avg_score).toFixed(2)}<small> / ${total}</small></div><div class="score-label">Final · ${x.judges_scored} judge${x.judges_scored > 1 ? "s" : ""}</div>`
+            : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${x.judges_scored}/${x.judges_needed || 0} judges in</div>`;
+          const row = document.createElement("div");
+          row.className =
+            "lb-row" +
+            (isRev && rank <= 3 ? ` r${rank}` : "") +
+            (isRev ? "" : " locked");
+          row.innerHTML = `<div class="rankwrap"><div class="ranknum">${isRev ? rank : "·"}</div></div>
       <div><div class="team-name">${esc(x.team_name)}</div>
-        <div class="team-meta">${x.klass?`<span class="chip gray">${esc(x.klass)}</span>`:""}${isRev?`<span class="chip green">Complete</span>`:`<span class="chip amber">Awaiting judges</span>`}</div>
+        <div class="team-meta">${x.klass ? `<span class="chip gray">${esc(x.klass)}</span>` : ""}${isRev ? `<span class="chip green">Complete</span>` : `<span class="chip amber">Awaiting judges</span>`}</div>
         <div class="prog"><i style="width:${pct}%"></i></div></div>
       <div class="score-cell">${scoreCell}</div>`;
-    board.appendChild(row);
-  });
-  renderStats();
-}
-function renderStats(){
-  const totalTeams=LB.length;
-  const complete=LB.filter(x=>x.is_complete).length;
-  const cats=new Set(LB.map(x=>x.category)).size;
-  $("#stats").innerHTML=`
+          board.appendChild(row);
+        });
+        renderStats();
+      }
+      function renderStats() {
+        const totalTeams = LB.length;
+        const complete = LB.filter((x) => x.is_complete).length;
+        const cats = new Set(LB.map((x) => x.category)).size;
+        $("#stats").innerHTML = `
     <div class="stat"><div class="n">${totalTeams}</div><div class="l">Teams</div></div>
     <div class="stat"><div class="n">${complete}</div><div class="l">Finalized</div></div>
     <div class="stat"><div class="n">${cats}</div><div class="l">Categories</div></div>`;
-}
+      }
 
-async function refresh(){
-  await loadLeaderboard(); render();
-  $("#foot").textContent="Last updated "+new Date().toLocaleTimeString();
-}
+      async function refresh() {
+        await loadLeaderboard();
+        render();
+        $("#foot").textContent =
+          "Last updated " + new Date().toLocaleTimeString();
+      }
 
-(async function init(){
-  if(!CONFIGURED){ $("#configWarn").style.display=""; return; }
-  sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  $("#content").style.display="";
-  // wire dropdowns
-  fillSelect($("#lbCategory"),catList());
-  const sync=()=>{ fillSelect($("#lbActivity"),actList($("#lbCategory").value).map(a=>({key:a.key,label:a.name}))); render(); };
-  $("#lbCategory").addEventListener("change",sync);
-  $("#lbActivity").addEventListener("change",render);
-  sync();
-  await refresh();
-  // auto-refresh every 30s so a projected screen stays current
-  setInterval(refresh, 30000);
-})();
-</script>
-</body>
+      (async function init() {
+        if (!CONFIGURED) {
+          $("#configWarn").style.display = "";
+          return;
+        }
+        sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        $("#content").style.display = "";
+        // wire dropdowns
+        fillSelect($("#lbCategory"), catList());
+        const sync = () => {
+          fillSelect(
+            $("#lbActivity"),
+            actList($("#lbCategory").value).map((a) => ({
+              key: a.key,
+              label: a.name,
+            })),
+          );
+          render();
+        };
+        $("#lbCategory").addEventListener("change", sync);
+        $("#lbActivity").addEventListener("change", render);
+        sync();
+        await refresh();
+        // auto-refresh every 30s so a projected screen stays current
+        setInterval(refresh, 30000);
+      })();
+    </script>
+  </body>
 </html>
