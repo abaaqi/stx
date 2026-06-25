@@ -1729,7 +1729,10 @@
           renderScoreControls();
           renderScoreStatus();
         }
-        if (tab === "teams") renderTeams();
+        if (tab === "teams") {
+          wireTeamCatActivity();
+          renderTeams();
+        }
         if (tab === "judges") renderJudges();
         if (tab === "manage") renderRubricRef();
       }
@@ -1926,6 +1929,24 @@
       }
 
       /* ---------- TEAMS (admin) ---------- */
+      let teamWired = false;
+      function wireTeamCatActivity() {
+        const catSel = $("#teamCategory"),
+          actSel = $("#teamActivity");
+        if (!catSel || !actSel) return;
+        // (re)populate the category list every time the tab opens
+        fillSelect(catSel, catList());
+        const sync = () =>
+          fillSelect(
+            actSel,
+            actList(catSel.value).map((a) => ({ key: a.key, label: a.name })),
+          );
+        if (!teamWired) {
+          catSel.addEventListener("change", sync);
+          teamWired = true;
+        }
+        sync();
+      }
       function wireCatActivity(catSel, actSel) {
         if (!catSel) return;
         fillSelect(catSel, catList());
