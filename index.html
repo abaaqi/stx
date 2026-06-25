@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEM Expo 2026 — Scoring System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a1f2e; --ink-soft:#33505f; --paper:#f3efe4; --panel:#ffffff;
+    --line:#d8d2c2; --grid:#cde3ec; --cyan:#0c8ca6; --cyan-deep:#076478;
+    --amber:#e8821a; --amber-soft:#fbe9d2; --green:#1f9d6b; --green-soft:#dcf2e8;
+    --red:#c4453b; --gold:#caa53d; --silver:#9aa4ab; --bronze:#b9844f;
+    --shadow:0 1px 0 rgba(10,31,46,.04), 0 8px 26px -14px rgba(10,31,46,.28);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:
+      linear-gradient(var(--grid) 1px,transparent 1px) 0 0/26px 26px,
+      linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/26px 26px,
+      var(--paper);
+    background-blend-mode:multiply; color:var(--ink); line-height:1.5; -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:"Space Grotesk",sans-serif}
+  .mono{font-family:"JetBrains Mono",monospace}
+
+  header{border-bottom:2px solid var(--ink);background:rgba(243,239,228,.82);backdrop-filter:blur(6px);position:sticky;top:0;z-index:40}
+  .head-inner{max-width:1180px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .badge{display:grid;place-items:center;width:46px;height:46px;flex:0 0 auto;border:2px solid var(--ink);border-radius:11px;background:var(--ink);color:var(--paper);font-family:"Space Grotesk";font-weight:700;font-size:19px;position:relative}
+  .badge::after{content:"";position:absolute;inset:5px;border:1px solid rgba(243,239,228,.35);border-radius:6px}
+  .title-block h1{margin:0;font-size:20px;letter-spacing:-.01em;line-height:1.1}
+  .title-block p{margin:1px 0 0;font-size:12.5px;color:var(--ink-soft);letter-spacing:.02em}
+  .head-spacer{flex:1}
+  .who{display:flex;align-items:center;gap:10px;font-size:13px}
+  .who .role{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:3px 9px;border-radius:999px;border:1.5px solid}
+  .role.admin{color:#7a4500;border-color:var(--amber);background:var(--amber-soft)}
+  .role.judge{color:var(--cyan-deep);border-color:var(--cyan);background:#e7f5f8}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,157,107,.55)}70%{box-shadow:0 0 0 9px rgba(31,157,107,0)}100%{box-shadow:0 0 0 0 rgba(31,157,107,0)}}
+
+  nav.tabs{max-width:1180px;margin:0 auto;padding:0 22px;display:flex;gap:4px;flex-wrap:wrap}
+  nav.tabs button{font-family:"Space Grotesk";font-weight:600;font-size:13.5px;border:2px solid transparent;border-bottom:none;background:none;color:var(--ink-soft);padding:11px 16px 12px;cursor:pointer;border-radius:10px 10px 0 0;margin-top:-2px;position:relative;top:2px}
+  nav.tabs button:hover{color:var(--ink)}
+  nav.tabs button.active{background:var(--paper);border-color:var(--ink);color:var(--ink)}
+  nav.tabs button.active::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--paper)}
+
+  main{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+
+  .eyebrow{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--cyan-deep)}
+  .panel{background:var(--panel);border:2px solid var(--ink);border-radius:14px;box-shadow:var(--shadow)}
+  .pad{padding:20px 22px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+  label.fld{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:600;color:var(--ink-soft)}
+  input[type=text],input[type=email],input[type=password],select{font-family:"DM Sans";font-size:14px;color:var(--ink);border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;min-width:180px}
+  input:focus,select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(12,140,166,.16)}
+  button.btn{font-family:"Space Grotesk";font-weight:600;font-size:13.5px;cursor:pointer;border:2px solid var(--ink);border-radius:9px;padding:9px 15px;background:var(--ink);color:var(--paper);transition:transform .04s ease}
+  button.btn:hover{background:#13344a}
+  button.btn:active{transform:translateY(1px)}
+  button.btn:disabled{opacity:.5;cursor:not-allowed}
+  button.btn.ghost{background:#fff;color:var(--ink)}
+  button.btn.ghost:hover{background:var(--paper)}
+  button.btn.amber{background:var(--amber);border-color:var(--amber);color:#3a2200}
+  button.btn.amber:hover{filter:brightness(1.05)}
+  button.btn.sm{font-size:12px;padding:6px 11px}
+  button.btn.danger{background:#fff;color:var(--red);border-color:var(--red)}
+  button.btn.danger:hover{background:#fbe9e7}
+  .hint{font-size:12.5px;color:var(--ink-soft)}
+  .empty{border:2px dashed var(--line);border-radius:12px;padding:26px;text-align:center;color:var(--ink-soft);font-size:14px;background:rgba(255,255,255,.5)}
+
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+  .sec-head h2{margin:6px 0 0;font-size:25px;letter-spacing:-.015em}
+  .sec-head .sub{font-size:13.5px;color:var(--ink-soft);margin-top:3px}
+
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.03em;border:1.5px solid}
+  .chip.cyan{color:var(--cyan-deep);border-color:var(--cyan);background:#e7f5f8}
+  .chip.amber{color:#7a4500;border-color:var(--amber);background:var(--amber-soft)}
+  .chip.green{color:#0c6a45;border-color:var(--green);background:var(--green-soft)}
+  .chip.gray{color:var(--ink-soft);border-color:var(--line);background:#fff}
+
+  .lb-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:18px}
+  .board{display:flex;flex-direction:column;gap:10px}
+  .lb-row{display:grid;grid-template-columns:54px 1fr auto;align-items:center;gap:14px;background:#fff;border:2px solid var(--ink);border-radius:13px;padding:13px 16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .rankwrap{display:flex;align-items:center;justify-content:center}
+  .ranknum{font-family:"Space Grotesk";font-weight:700;font-size:22px;width:42px;height:42px;display:grid;place-items:center;border-radius:11px;border:2px solid var(--ink);background:var(--paper)}
+  .lb-row.r1 .ranknum{background:var(--gold);border-color:#9c7e1f;color:#3a2c00}
+  .lb-row.r2 .ranknum{background:var(--silver);border-color:#6f797f;color:#1d2429}
+  .lb-row.r3 .ranknum{background:var(--bronze);border-color:#8a5f37;color:#2e1a08}
+  .lb-row.r1{border-color:#9c7e1f}
+  .team-name{font-family:"Space Grotesk";font-weight:600;font-size:17px;letter-spacing:-.01em}
+  .team-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:5px}
+  .score-cell{text-align:right;min-width:120px}
+  .score-num{font-family:"Space Grotesk";font-weight:700;font-size:26px;letter-spacing:-.02em;line-height:1}
+  .score-num small{font-size:14px;color:var(--ink-soft);font-weight:500}
+  .score-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin-top:3px}
+  .locked .score-num{color:var(--ink-soft)}
+  .prog{height:6px;border-radius:4px;background:var(--paper);border:1px solid var(--line);overflow:hidden;margin-top:8px;width:100%}
+  .prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--cyan-deep))}
+  .judge-track{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap}
+  .jdot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--cyan-deep)}
+  .jdot.done{background:var(--cyan-deep)}
+  .jdot.pending{background:#fff}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:14px}
+  .card{background:#fff;border:2px solid var(--ink);border-radius:13px;padding:15px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px}
+  .card h3{margin:0;font-size:16px;letter-spacing:-.01em}
+  .card .meta{font-size:12.5px;color:var(--ink-soft)}
+  .card-actions{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+  .cat-tag{font-size:11px;font-weight:700;color:var(--cyan-deep);text-transform:uppercase;letter-spacing:.08em}
+
+  table.crit{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.crit th,table.crit td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.crit th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);font-weight:700}
+  table.crit td.cdesc{color:var(--ink-soft);font-size:12.5px}
+  table.crit input[type=number]{width:84px;font-family:"JetBrains Mono";font-size:14px;font-weight:700;text-align:center;border:1.5px solid var(--line);border-radius:8px;padding:7px;background:#fff;color:var(--ink)}
+  table.crit input[type=number]:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 3px rgba(12,140,166,.16)}
+  table.crit input.bad{border-color:var(--red);box-shadow:0 0 0 3px rgba(196,69,59,.15)}
+  .maxcell{font-family:"JetBrains Mono";color:var(--ink-soft);font-size:13px}
+  .totalbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:14px 16px;border:2px solid var(--ink);border-radius:11px;background:var(--ink);color:var(--paper)}
+  .totalbar .big{font-family:"Space Grotesk";font-weight:700;font-size:30px;line-height:1}
+  .totalbar .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.8}
+
+  .scrim{position:fixed;inset:0;background:rgba(10,31,46,.55);backdrop-filter:blur(3px);z-index:60;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+  .scrim.open{display:flex}
+  .modal{background:var(--paper);border:2px solid var(--ink);border-radius:16px;max-width:760px;width:100%;box-shadow:0 30px 80px -20px rgba(10,31,46,.5)}
+  .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:2px solid var(--ink)}
+  .modal-head h2{margin:0;font-size:21px}
+  .modal-head .ctx{font-size:13px;color:var(--ink-soft);margin-top:3px}
+  .x{border:2px solid var(--ink);background:#fff;border-radius:9px;width:34px;height:34px;cursor:pointer;font-size:18px;line-height:1;display:grid;place-items:center}
+  .modal-body{padding:20px 22px}
+  .modal-foot{padding:16px 22px;border-top:2px solid var(--ink);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+
+  #toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);font-weight:600;font-size:13.5px;padding:11px 18px;border-radius:11px;box-shadow:0 14px 40px -10px rgba(10,31,46,.6);opacity:0;pointer-events:none;transition:.25s;z-index:80;font-family:"Space Grotesk";max-width:90vw;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #toast.err{background:var(--red)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+  .stat{background:#fff;border:2px solid var(--ink);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+  .stat .n{font-family:"Space Grotesk";font-weight:700;font-size:28px;line-height:1}
+  .stat .l{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-soft);margin-top:5px}
+
+  .note{font-size:12.5px;color:var(--ink-soft);background:var(--amber-soft);border:1.5px solid var(--amber);border-radius:10px;padding:11px 13px;display:flex;gap:9px;align-items:flex-start}
+  .note b{color:#7a4500}
+  .divider{height:2px;background:var(--line);border:none;margin:22px 0}
+
+  #loginView{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{max-width:440px;width:100%}
+  .login-card .panel{padding:0;overflow:hidden}
+  .login-hero{background:var(--ink);color:var(--paper);padding:26px 26px 22px}
+  .login-hero .badge{margin-bottom:14px}
+  .login-hero h1{margin:0;font-size:24px}
+  .login-hero p{margin:6px 0 0;font-size:13.5px;color:rgba(243,239,228,.72)}
+  .login-body{padding:24px 26px}
+  .login-body .fld{width:100%}
+  .login-body input{width:100%}
+  .seg{display:flex;gap:0;border:2px solid var(--ink);border-radius:10px;overflow:hidden;margin-bottom:18px}
+  .seg button{flex:1;border:none;background:#fff;font-family:"Space Grotesk";font-weight:600;font-size:13.5px;padding:10px;cursor:pointer;color:var(--ink-soft)}
+  .seg button.on{background:var(--ink);color:var(--paper)}
+  .config-warn{background:#fff4f3;border:1.5px solid var(--red);color:#7a1f18;border-radius:10px;padding:12px 14px;font-size:13px;margin-bottom:18px}
+  .config-warn b{color:var(--red)}
+
+  @media print{
+    header,nav.tabs,.no-print,#toast,.scrim{display:none !important}
+    body{background:#fff}
+    main{padding:0;max-width:none}
+    .panel{box-shadow:none;border:1px solid #000;page-break-inside:avoid}
+    .lb-row{box-shadow:none}
+  }
+
+  @media(max-width:560px){
+    .lb-row{grid-template-columns:46px 1fr}
+    .score-cell{grid-column:1/-1;text-align:left;border-top:1px solid var(--line);padding-top:10px;margin-top:4px}
+    .score-num{font-size:23px}
+    .totalbar .big{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN VIEW ============ -->
+<div id="loginView">
+  <div class="login-card">
+    <div class="panel">
+      <div class="login-hero">
+        <div class="badge">SX</div>
+        <h1>STEM Expo 2026</h1>
+        <p>Judging &amp; Live Scoring Console</p>
+      </div>
+      <div class="login-body">
+        <div id="configWarn" class="config-warn" style="display:none">
+          <b>Not connected yet.</b> Open this file and paste your Supabase URL and key into the <span class="mono">SUPABASE_URL</span> / <span class="mono">SUPABASE_ANON_KEY</span> values near the top of the script. See the hosting guide.
+        </div>
+        <div class="seg" id="authSeg">
+          <button data-mode="login" class="on">Log in</button>
+          <button data-mode="signup">Create account</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <label class="fld" id="nameFld" style="display:none">Full name
+            <input type="text" id="authName" placeholder="e.g. Mrs. Okoro" autocomplete="name">
+          </label>
+          <label class="fld">Email
+            <input type="email" id="authEmail" placeholder="you@school.edu" autocomplete="email">
+          </label>
+          <label class="fld">Password
+            <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password">
+          </label>
+          <button class="btn amber" id="authBtn" style="width:100%;justify-content:center">Log in</button>
+          <div class="hint" id="authMsg" style="text-align:center"></div>
+        </div>
+        <hr class="divider" style="margin:20px 0 14px">
+        <p class="hint" style="margin:0">Judges: use the email &amp; password your administrator gave you. Forgot it? Ask the admin to reset it.</p>
+      </div>
+    </div>
+    <p class="hint" style="text-align:center;margin-top:14px">Secured by Supabase Auth · Data is private to your event</p>
+  </div>
+</div>
+
+<!-- ============ APP VIEW ============ -->
+<div id="appView" style="display:none">
+<header>
+  <div class="head-inner">
+    <div class="badge">SX</div>
+    <div class="title-block">
+      <h1>STEM Expo 2026</h1>
+      <p>Judging &amp; Live Scoring Console</p>
+    </div>
+    <div class="head-spacer"></div>
+    <div class="who">
+      <span id="whoName" class="mono"></span>
+      <span id="whoRole" class="role judge">Judge</span>
+      <button class="btn ghost sm" id="logoutBtn">Log out</button>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</header>
+
+<main>
+  <!-- ===== LEADERBOARD ===== -->
+  <section id="tab-leaderboard" style="display:none">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Standings</div>
+        <h2>Live Leaderboard</h2>
+        <div class="sub">Final scores stay hidden until every assigned judge has scored a team.</div>
+      </div>
+      <div class="no-print" style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" id="refreshLb">↻ Refresh</button>
+        <button class="btn ghost sm admin-only" id="csvBtn">Export CSV</button>
+        <button class="btn ghost sm" id="printBtn">Print results</button>
+      </div>
+    </div>
+    <div class="stats" id="lbStats"></div>
+    <div class="lb-controls no-print">
+      <label class="fld">Category<select id="lbCategory"></select></label>
+      <label class="fld">Activity / Track<select id="lbActivity"></select></label>
+      <div style="flex:1"></div>
+      <span class="chip cyan" id="lbCountChip">0 teams</span>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="admin-only" id="classAggWrap" style="margin-top:30px"></div>
+  </section>
+
+  <!-- ===== SCORE ===== -->
+  <section id="tab-score" style="display:none">
+    <div class="sec-head">
+      <div>
+        <div class="eyebrow">Judging</div>
+        <h2 id="scoreHeading">My Scoring</h2>
+        <div class="sub" id="scoreSub">Choose a team you're assigned to and enter marks against the official rubric.</div>
+      </div>
+    </div>
+    <div class="panel pad" style="margin-bottom:20px">
+      <div class="row">
+        <label class="fld admin-only">Judge<select id="scoreJudge"></select></label>
+        <label class="fld">Category<select id="scoreCategory"></select></label>
+        <label class="fld">Activity / Track<select id="scoreActivity"></select></label>
+        <label class="fld">Team<select id="scoreTeam"></select></label>
+        <button class="btn amber" id="openScoreBtn">Open scoresheet →</button>
+      </div>
+      <div class="hint" style="margin-top:10px" id="scoreHelper"></div>
+    </div>
+    <div id="scoreStatus"></div>
+  </section>
+
+  <!-- ===== TEAMS (admin) ===== -->
+  <section id="tab-teams" style="display:none">
+    <div class="sec-head">
+      <div><div class="eyebrow">Roster</div><h2>Teams</h2>
+      <div class="sub">Register teams under a category and the activity they compete in.</div></div>
+    </div>
+    <div class="panel pad" style="margin-bottom:22px">
+      <div class="row">
+        <label class="fld">Team name / number<input type="text" id="teamName" placeholder="e.g. Group 4 — Solar Car"></label>
+        <label class="fld">Category<select id="teamCategory"></select></label>
+        <label class="fld">Activity / Track<select id="teamActivity"></select></label>
+        <label class="fld">Class / School <span style="font-weight:400">(optional)</span><input type="text" id="teamClass" placeholder="e.g. Year 1A"></label>
+        <button class="btn" id="addTeamBtn">Add team</button>
+      </div>
+    </div>
+    <div id="teamsList"></div>
+  </section>
+
+  <!-- ===== JUDGES (admin) ===== -->
+  <section id="tab-judges" style="display:none">
+    <div class="sec-head">
+      <div><div class="eyebrow">Panel</div><h2>Judges</h2>
+      <div class="sub">Create a login for each judge, then assign them to activities. A team's score reveals once all assigned judges have scored it.</div></div>
+    </div>
+    <div class="panel pad" style="margin-bottom:22px">
+      <div class="eyebrow" style="margin-bottom:12px">Create a judge login</div>
+      <div class="row">
+        <label class="fld">Full name<input type="text" id="njName" placeholder="e.g. Mr. Bello"></label>
+        <label class="fld">Email<input type="email" id="njEmail" placeholder="judge@school.edu"></label>
+        <label class="fld">Temporary password<input type="text" id="njPass" placeholder="min 6 characters"></label>
+        <button class="btn" id="createJudgeBtn">Create judge</button>
+      </div>
+      <div class="hint" style="margin-top:10px">The judge logs in with this email &amp; password, then can change their password. Share credentials privately.</div>
+    </div>
+    <div id="judgesList"></div>
+  </section>
+
+  <!-- ===== SETUP ===== -->
+  <section id="tab-manage" style="display:none">
+    <div class="sec-head">
+      <div><div class="eyebrow">Reference</div><h2>Setup &amp; Rubrics</h2>
+      <div class="sub">Every activity below is preloaded with its official criteria and point caps.</div></div>
+    </div>
+    <div id="rubricRef"></div>
+  </section>
+</main>
+</div>
+
+<!-- Score modal -->
+<div class="scrim" id="scrim">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div><div class="eyebrow" id="mdActivity">Activity</div><h2 id="mdTeam">Team</h2><div class="ctx" id="mdJudge">Judge</div></div>
+      <button class="x" id="mdClose" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body" id="mdBody"></div>
+    <div class="modal-foot">
+      <div class="hint" id="mdWarn"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn ghost" id="mdCancel">Cancel</button>
+        <button class="btn amber" id="mdSave">Save score</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ============================================================
+   ⬇⬇⬇  PASTE YOUR SUPABASE CREDENTIALS HERE  ⬇⬇⬇
+   Find them in: Supabase Dashboard → Project Settings → API
+   ============================================================ */
+const SUPABASE_URL      = "YOUR_SUPABASE_URL_HERE";        // e.g. https://abcdxyz.supabase.co
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";   // the "anon / public" key
+/* ============================================================ */
+
+const CONFIGURED = !/YOUR_SUPABASE/.test(SUPABASE_URL+SUPABASE_ANON_KEY);
+let sb = null;
+if(CONFIGURED){ sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); }
+
+const RUBRICS = {
+  PRE:{ label:"Preschool", activities:{
+    project:{name:"Project-Based Activity",total:50,criteria:[
+      {id:"crea",name:"Creativity & Appearance",max:10,desc:"Neatness, attractiveness, use of colour, overall presentation."},
+      {id:"func",name:"Functionality",max:10,desc:"Model demonstrates its intended function, movement or operation."},
+      {id:"under",name:"Understanding of Project",max:20,desc:"Group can explain the project, its purpose and how it works."},
+      {id:"team",name:"Teamwork",max:10,desc:"Participation and cooperation of all group members."},
+      {id:"conf",name:"Confidence During Presentation",max:10,desc:"Clear speech, enthusiasm, eye contact, audience engagement."}]},
+    beebot:{name:"Bee-Bot Coding Competition",total:50,criteria:[
+      {id:"acc",name:"Accuracy / Problem-Solving",max:30,desc:"Plan & program Bee-Bot to reach target using logical sequencing."},
+      {id:"time",name:"Time Management",max:20,desc:"Efficiency within the 3-minute limit, including retries."}]},
+    lego:{name:"LEGO Coupling Challenge",total:50,criteria:[
+      {id:"acc",name:"Accuracy & Structure",max:20,desc:"Correct use of all 12 pieces & proper assembly (1.6 pts each)."},
+      {id:"speed",name:"Speed / Time",max:15,desc:"How fast the team completes the structure correctly."},
+      {id:"team",name:"Teamwork",max:10,desc:"Equal participation, coordination & cooperation of all 3 players."},
+      {id:"crea",name:"Creativity & Design",max:5,desc:"Neatness, creativity, how 'warrior-like' the build appears."}]},
+    rubik:{name:"Face-Changing Rubik Challenge",total:50,criteria:[
+      {id:"acc",name:"Accuracy",max:35,desc:"Number of face cards completed correctly (of 16)."},
+      {id:"speed",name:"Speed",max:15,desc:"Time efficiency across the 5-minute limit."}]},
+    wizbot:{name:"Destination Challenge (WizBot)",total:50,criteria:[
+      {id:"shape",name:"Shape Completion Accuracy",max:35,desc:"2 squares, 2 circles, 2 triangles + reach finish. Apply extra-shape penalties here."},
+      {id:"time",name:"Time Performance",max:15,desc:"Completion time (only if finished within the limit)."}]},
+    numpuzzle:{name:"Number Puzzle Challenge",total:50,criteria:[
+      {id:"arr",name:"Number Arrangement Accuracy",max:35,desc:"Correct placement of numbers in sequence 1–15."},
+      {id:"time",name:"Time Performance",max:15,desc:"Speed of completion within the 5-minute limit."}]}
+  }},
+  LP:{ label:"Lower Primary", activities:primaryTracks(["techpreneurship","abacus"]) },
+  UP:{ label:"Upper Primary", activities:primaryTracks(["techpreneurship","abacus","maze"]) },
+  JS:{ label:"Junior Secondary", activities:primaryTracks(["techpreneurship","abacus","robosoccer"]) },
+  SS:{ label:"Senior Secondary", activities:primaryTracks(["adv_techpreneurship"]) }
+};
+function primaryTracks(keys){
+  const defs={
+    techpreneurship:{name:"Techpreneurship Track",crit:techCrit()},
+    adv_techpreneurship:{name:"Advanced Techpreneurship Track",crit:techCrit()},
+    abacus:{name:"Abacus Mathematics",crit:[
+      {id:"speed",name:"Speed",max:40,desc:"Rate of accurate computation."},
+      {id:"acc",name:"Accuracy",max:40,desc:"Correctness of answers."},
+      {id:"conc",name:"Concentration & Technique",max:20,desc:"Focus, posture and mental method."}]},
+    maze:{name:"Maze Challenge",crit:[
+      {id:"nav",name:"Navigation & Completion",max:40,desc:"Robot reaches the maze end correctly."},
+      {id:"logic",name:"Logic & Control",max:30,desc:"Quality of programming / control decisions."},
+      {id:"eff",name:"Efficiency",max:20,desc:"Time and path efficiency."},
+      {id:"team",name:"Teamwork",max:10,desc:"Cooperation among members."}]},
+    robosoccer:{name:"Robo Soccer League",crit:[
+      {id:"design",name:"Robot Design & Build",max:25,desc:"Construction quality and movement efficiency."},
+      {id:"control",name:"Control Systems",max:25,desc:"Responsiveness and real-time decision-making."},
+      {id:"strategy",name:"Strategy & Gameplay",max:25,desc:"Tactics and match performance."},
+      {id:"team",name:"Teamwork",max:25,desc:"Coordination and collaboration."}]}
+  };
+  const out={}; keys.forEach(k=>out[k]={name:defs[k].name,total:100,criteria:defs[k].crit}); return out;
+}
+function techCrit(){return[
+  {id:"innov",name:"Innovation & Creativity",max:25,desc:"Originality of the idea and product."},
+  {id:"exec",name:"Technical Execution",max:25,desc:"How well the project is built and works."},
+  {id:"pitch",name:"Pitch & Presentation",max:25,desc:"Branding, marketing, diction and confidence."},
+  {id:"impact",name:"Real-World Impact",max:25,desc:"Usefulness, scalability and problem-solving."}];}
+
+let ME=null, JUDGES=[], TEAMS=[], ASSIGN=[], MYSCORES={}, LB=[];
+
+const $=s=>document.querySelector(s);
+const isAdmin=()=>ME&&ME.role==="admin";
+function catList(){ return Object.keys(RUBRICS).map(k=>({key:k,label:RUBRICS[k].label})); }
+function actList(c){ const x=RUBRICS[c]; if(!x) return []; return Object.keys(x.activities).map(k=>({key:k,name:x.activities[k].name,total:x.activities[k].total})); }
+function rubricOf(c,a){ return RUBRICS[c]&&RUBRICS[c].activities[a]; }
+function assignedJudgeIds(c,a){ return ASSIGN.filter(x=>x.category===c&&x.activity===a).map(x=>x.judge_id); }
+function judgeName(id){ const j=JUDGES.find(x=>x.id===id); return j?j.full_name:"—"; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])); }
+function fillSelect(sel,items,o){ o=o||{}; const value=o.value||"key",label=o.label||"label",placeholder=o.placeholder||null;
+  if(!sel) return; const cur=sel.value; sel.innerHTML="";
+  if(placeholder){const op=document.createElement("option");op.value="";op.textContent=placeholder;sel.appendChild(op);}
+  items.forEach(it=>{const op=document.createElement("option");op.value=it[value];op.textContent=it[label];sel.appendChild(op);});
+  if([...sel.options].some(op=>op.value===cur)) sel.value=cur;
+}
+function toast(msg,isErr){ const t=$("#toast"); t.textContent=msg; t.classList.toggle("err",!!isErr); t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2600); }
+function friendly(err){ const m=(err&&err.message)||String(err);
+  if(/Invalid login/i.test(m)) return "Wrong email or password.";
+  if(/already registered/i.test(m)) return "That email already has an account — log in instead.";
+  if(/at least 6/i.test(m)) return "Password must be at least 6 characters.";
+  return m; }
+
+/* ---------- AUTH ---------- */
+let authMode="login";
+$("#authSeg").addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
+  authMode=b.dataset.mode; [...$("#authSeg").children].forEach(x=>x.classList.toggle("on",x===b));
+  $("#nameFld").style.display=authMode==="signup"?"":"none";
+  $("#authBtn").textContent=authMode==="signup"?"Create account":"Log in"; $("#authMsg").textContent=""; });
+$("#authBtn").addEventListener("click",doAuth);
+$("#authPass").addEventListener("keydown",e=>{ if(e.key==="Enter") doAuth(); });
+
+async function doAuth(){
+  if(!CONFIGURED){ toast("Add your Supabase keys first",true); return; }
+  const email=$("#authEmail").value.trim(), pass=$("#authPass").value, name=$("#authName").value.trim();
+  if(!email||!pass){ $("#authMsg").textContent="Enter email and password."; return; }
+  $("#authBtn").disabled=true; $("#authMsg").textContent="Working…";
+  try{
+    if(authMode==="signup"){
+      const {data,error}=await sb.auth.signUp({email,password:pass});
+      if(error) throw error;
+      const uid=data.user.id;
+      const {count}=await sb.from("profiles").select("*",{count:"exact",head:true});
+      const role=(count===0)?"admin":"judge";
+      await sb.from("profiles").insert({id:uid,full_name:name||email,role});
+      $("#authMsg").textContent="Account created. You can log in now.";
+      if(data.session){ await afterLogin(); }
+    }else{
+      const {error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error) throw error;
+      await afterLogin();
+    }
+  }catch(err){ $("#authMsg").textContent=friendly(err); }
+  finally{ $("#authBtn").disabled=false; }
+}
+$("#logoutBtn").addEventListener("click",async()=>{ await sb.auth.signOut(); location.reload(); });
+
+async function afterLogin(){
+  const {data:{user}}=await sb.auth.getUser(); if(!user) return;
+  let {data:prof}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle();
+  if(!prof){
+    const {count}=await sb.from("profiles").select("*",{count:"exact",head:true});
+    const role=(count===0)?"admin":"judge";
+    await sb.from("profiles").insert({id:user.id,full_name:user.email,role});
+    ({data:prof}=await sb.from("profiles").select("*").eq("id",user.id).maybeSingle());
+  }
+  ME=prof;
+  $("#loginView").style.display="none"; $("#appView").style.display="";
+  $("#whoName").textContent=ME.full_name;
+  $("#whoRole").textContent=isAdmin()?"Admin":"Judge";
+  $("#whoRole").className="role "+(isAdmin()?"admin":"judge");
+  buildTabs(); await refreshAll(); switchTab(isAdmin()?"leaderboard":"score");
+}
+
+/* ---------- TABS ---------- */
+function buildTabs(){
+  const tabs=isAdmin()
+    ? [["leaderboard","Leaderboard"],["score","Score a Team"],["teams","Teams"],["judges","Judges"],["manage","Setup"]]
+    : [["score","My Scoring"],["leaderboard","Leaderboard"],["manage","Rubrics"]];
+  const nav=$("#tabs"); nav.innerHTML="";
+  tabs.forEach(([k,lbl],i)=>{ const b=document.createElement("button"); b.dataset.tab=k; b.textContent=lbl; if(i===0)b.classList.add("active"); nav.appendChild(b); });
+  document.querySelectorAll(".admin-only").forEach(el=>el.style.display=isAdmin()?"":"none");
+  if(!isAdmin()){ $("#scoreHeading").textContent="My Scoring"; }
+  else{ $("#scoreHeading").textContent="Score a Team"; $("#scoreSub").textContent="Pick the judge, choose a team, and enter marks against the official rubric."; }
+}
+$("#tabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-tab]"); if(b) switchTab(b.dataset.tab); });
+function switchTab(tab){
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("active",x.dataset.tab===tab));
+  ["leaderboard","score","teams","judges","manage"].forEach(t=>{ const el=$("#tab-"+t); if(el) el.style.display=t===tab?"":"none"; });
+  renderActiveTab(tab);
+}
+function renderActiveTab(tab){
+  if(tab==="leaderboard") renderLeaderboard();
+  if(tab==="score"){ renderScoreControls(); renderScoreStatus(); }
+  if(tab==="teams") renderTeams();
+  if(tab==="judges") renderJudges();
+  if(tab==="manage") renderRubricRef();
+}
+
+/* ---------- DATA ---------- */
+async function refreshAll(){
+  await Promise.all([loadJudges(),loadTeams(),loadAssign(),loadMyScores(),loadLeaderboard()]);
+  const active=document.querySelector("#tabs button.active");
+  renderActiveTab(active?active.dataset.tab:"leaderboard"); renderLbStats();
+}
+async function loadJudges(){ if(!isAdmin()){ JUDGES=ME?[ME]:[]; return; } const {data,error}=await sb.from("profiles").select("*").order("created_at"); if(!error) JUDGES=data||[]; }
+async function loadTeams(){ const {data,error}=await sb.from("teams").select("*").order("created_at"); if(!error) TEAMS=data||[]; }
+async function loadAssign(){ const {data,error}=await sb.from("assignments").select("*"); if(!error) ASSIGN=data||[]; }
+async function loadMyScores(){ MYSCORES={}; if(!ME) return; const {data,error}=await sb.from("scores").select("*").eq("judge_id",ME.id); if(!error)(data||[]).forEach(r=>{ MYSCORES[r.team_id]={criteria:r.criteria||{},total:Number(r.total)}; }); }
+async function loadLeaderboard(){ const {data,error}=await sb.rpc("leaderboard"); LB=error?[]:(data||[]); }
+
+/* ---------- JUDGES (admin) ---------- */
+$("#createJudgeBtn").addEventListener("click",createJudge);
+async function createJudge(){
+  const name=$("#njName").value.trim(), email=$("#njEmail").value.trim(), pass=$("#njPass").value.trim();
+  if(!name||!email||!pass){ toast("Fill name, email and password",true); return; }
+  if(pass.length<6){ toast("Password needs 6+ characters",true); return; }
+  $("#createJudgeBtn").disabled=true;
+  try{
+    const tmp=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    const {data,error}=await tmp.auth.signUp({email,password:pass});
+    if(error) throw error;
+    await tmp.from("profiles").insert({id:data.user.id,full_name:name,role:"judge"});
+    await tmp.auth.signOut();
+    $("#njName").value="";$("#njEmail").value="";$("#njPass").value="";
+    await loadJudges(); renderJudges(); toast("Judge created: "+name);
+  }catch(err){ toast(friendly(err),true); }
+  finally{ $("#createJudgeBtn").disabled=false; }
+}
+function renderJudges(){
+  const wrap=$("#judgesList"); if(!wrap) return;
+  const judges=JUDGES.filter(j=>j.role==="judge");
+  if(!judges.length){ wrap.innerHTML=`<div class="empty">No judges yet. Create a judge login above.</div>`; return; }
+  wrap.innerHTML="";
+  judges.forEach(j=>{
+    const assignedCount=ASSIGN.filter(a=>a.judge_id===j.id).length;
+    const card=document.createElement("div"); card.className="panel pad"; card.style.marginBottom="14px";
+    card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap">
+      <div><h3 style="margin:0;font-size:18px;font-family:'Space Grotesk'">${esc(j.full_name)}</h3>
+      <div class="hint" style="margin-top:3px">${assignedCount} ${assignedCount===1?"activity":"activities"} assigned</div></div>
+      <button class="btn danger sm" data-del="${j.id}">Remove</button></div>
+      <hr class="divider" style="margin:15px 0">
+      <div class="eyebrow" style="margin-bottom:10px">Assign to activities</div>
+      <div class="assign-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px"></div>`;
+    const ag=card.querySelector(".assign-grid");
+    catList().forEach(c=>actList(c.key).forEach(a=>{
+      const on=ASSIGN.some(x=>x.judge_id===j.id&&x.category===c.key&&x.activity===a.key);
+      const lbl=document.createElement("label");
+      lbl.style.cssText="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:#fff;cursor:pointer";
+      if(on){lbl.style.borderColor="var(--cyan)";lbl.style.background="#e7f5f8";}
+      lbl.innerHTML=`<input type="checkbox" ${on?"checked":""} style="margin-top:2px">
+        <span><b style="font-weight:600;color:var(--ink)">${esc(a.name)}</b><br><span style="color:var(--ink-soft)">${esc(c.label)}</span></span>`;
+      lbl.querySelector("input").addEventListener("change",async ev=>{
+        ev.target.disabled=true;
+        try{
+          if(ev.target.checked){ await sb.from("assignments").insert({judge_id:j.id,category:c.key,activity:a.key}); }
+          else { await sb.from("assignments").delete().match({judge_id:j.id,category:c.key,activity:a.key}); }
+          await loadAssign(); renderJudges(); await loadLeaderboard(); renderLbStats();
+        }catch(err){ toast("Couldn't update assignment",true); ev.target.disabled=false; }
+      });
+      ag.appendChild(lbl);
+    }));
+    wrap.appendChild(card);
+  });
+  wrap.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",async()=>{
+    if(!confirm("Remove this judge? This deletes their profile and scores.\n\nNote: their login still exists in Supabase Auth — delete it there too if you want to free the email.")) return;
+    try{ await sb.from("profiles").delete().eq("id",b.dataset.del);
+      await Promise.all([loadJudges(),loadAssign(),loadLeaderboard()]); renderJudges(); renderLbStats(); toast("Judge removed");
+    }catch(err){ toast("Couldn't remove judge",true); }
+  }));
+}
+
+/* ---------- TEAMS (admin) ---------- */
+function wireCatActivity(catSel,actSel){ if(!catSel) return; fillSelect(catSel,catList());
+  const sync=()=>fillSelect(actSel,actList(catSel.value).map(a=>({key:a.key,label:a.name})));
+  catSel.addEventListener("change",sync); sync(); }
+$("#addTeamBtn")&&$("#addTeamBtn").addEventListener("click",async()=>{
+  const name=$("#teamName").value.trim(), cat=$("#teamCategory").value, act=$("#teamActivity").value, klass=$("#teamClass").value.trim();
+  if(!name){ toast("Enter a team name",true); return; }
+  if(!cat||!act){ toast("Choose category & activity",true); return; }
+  try{ await sb.from("teams").insert({name,category:cat,activity:act,klass});
+    $("#teamName").value="";$("#teamClass").value="";
+    await Promise.all([loadTeams(),loadLeaderboard()]); renderTeams(); renderLbStats(); toast("Team added");
+  }catch(err){ toast("Couldn't add team",true); }
+});
+function renderTeams(){
+  const wrap=$("#teamsList"); if(!wrap) return;
+  if(!TEAMS.length){ wrap.innerHTML=`<div class="empty">No teams yet. Register teams above to populate the leaderboard.</div>`; return; }
+  wrap.innerHTML="";
+  catList().forEach(c=>{
+    const inCat=TEAMS.filter(t=>t.category===c.key); if(!inCat.length) return;
+    const block=document.createElement("div"); block.style.marginBottom="24px";
+    block.innerHTML=`<div class="eyebrow" style="margin-bottom:12px">${esc(c.label)} · ${inCat.length} team${inCat.length>1?"s":""}</div>`;
+    const grid=document.createElement("div"); grid.className="grid";
+    inCat.forEach(t=>{
+      const r=rubricOf(t.category,t.activity);
+      const need=assignedJudgeIds(t.category,t.activity).length;
+      const lbRow=LB.find(x=>x.team_id===t.id); const done=lbRow?lbRow.judges_scored:0;
+      const card=document.createElement("div"); card.className="card";
+      card.innerHTML=`<div class="cat-tag">${esc(r?r.name:"—")}</div><h3>${esc(t.name)}</h3>
+        ${t.klass?`<div class="meta">${esc(t.klass)}</div>`:""}
+        <div class="meta">${done}/${need||0} judges scored · ${r?r.total:0} pts max</div>
+        <div class="card-actions"><button class="btn ghost sm" data-score="${t.id}">Score</button>
+        <button class="btn danger sm" data-delteam="${t.id}">Delete</button></div>`;
+      grid.appendChild(card);
+    });
+    block.appendChild(grid); wrap.appendChild(block);
+  });
+  wrap.querySelectorAll("[data-delteam]").forEach(b=>b.addEventListener("click",async()=>{
+    if(!confirm("Delete this team and all its scores?")) return;
+    try{ await sb.from("teams").delete().eq("id",b.dataset.delteam);
+      await Promise.all([loadTeams(),loadLeaderboard()]); renderTeams(); renderLbStats(); toast("Team deleted");
+    }catch(err){ toast("Couldn't delete team",true); }
+  }));
+  wrap.querySelectorAll("[data-score]").forEach(b=>b.addEventListener("click",()=>{ const t=TEAMS.find(x=>x.id===b.dataset.score); goScoreFor(t); }));
+}
+
+/* ---------- SCORE ---------- */
+function renderScoreControls(){
+  if(isAdmin()) fillSelect($("#scoreJudge"),JUDGES.filter(j=>j.role==="judge").map(j=>({key:j.id,label:j.full_name})),{placeholder:"— select judge —"});
+  wireScoreCatAct(); refreshScoreTeams(); updateScoreHelper();
+}
+let scoreWired=false;
+function wireScoreCatAct(){
+  if(scoreWired) return; scoreWired=true;
+  fillSelect($("#scoreCategory"),catList());
+  const sync=()=>{ fillSelect($("#scoreActivity"),actList($("#scoreCategory").value).map(a=>({key:a.key,label:a.name}))); refreshScoreTeams(); updateScoreHelper(); renderScoreStatus(); };
+  $("#scoreCategory").addEventListener("change",sync);
+  $("#scoreActivity").addEventListener("change",()=>{refreshScoreTeams();updateScoreHelper();renderScoreStatus();});
+  $("#scoreJudge")&&$("#scoreJudge").addEventListener("change",()=>{updateScoreHelper();renderScoreStatus();});
+  $("#scoreTeam").addEventListener("change",updateScoreHelper);
+  sync();
+}
+function currentJudgeId(){ return isAdmin()?$("#scoreJudge").value:(ME&&ME.id); }
+function refreshScoreTeams(){
+  const cat=$("#scoreCategory").value, act=$("#scoreActivity").value;
+  let teams=TEAMS.filter(t=>t.category===cat&&t.activity===act);
+  if(!isAdmin()){ const mine=new Set(ASSIGN.filter(a=>a.judge_id===ME.id).map(a=>a.category+"::"+a.activity)); if(!mine.has(cat+"::"+act)) teams=[]; }
+  fillSelect($("#scoreTeam"),teams.map(t=>({key:t.id,label:t.name})),{placeholder:teams.length?"— select team —":"no teams to score here"});
+}
+function updateScoreHelper(){
+  const jid=currentJudgeId(), t=$("#scoreTeam").value, cat=$("#scoreCategory").value, act=$("#scoreActivity").value;
+  const h=$("#scoreHelper");
+  if(isAdmin()&&!jid){ h.textContent="Select which judge you're entering scores for."; return; }
+  if(!isAdmin()){ const mine=new Set(ASSIGN.filter(a=>a.judge_id===ME.id).map(a=>a.category+"::"+a.activity));
+    if(cat&&act&&!mine.has(cat+"::"+act)){ h.innerHTML=`You're not assigned to <b>${esc((rubricOf(cat,act)||{}).name||"this activity")}</b>. Pick one you're assigned to.`; return; } }
+  if(jid&&t){ h.textContent="Ready — open the scoresheet to enter marks."; return; }
+  h.textContent="Choose an activity and team to begin.";
+}
+$("#openScoreBtn").addEventListener("click",()=>{ const jid=currentJudgeId(), t=$("#scoreTeam").value;
+  if(!jid){ toast("Select a judge",true); return; } if(!t){ toast("Select a team",true); return; } openScoresheet(t,jid); });
+function goScoreFor(team){
+  switchTab("score"); $("#scoreCategory").value=team.category;
+  fillSelect($("#scoreActivity"),actList(team.category).map(a=>({key:a.key,label:a.name})));
+  $("#scoreActivity").value=team.activity; refreshScoreTeams(); $("#scoreTeam").value=team.id;
+  if(isAdmin()&&JUDGES.filter(j=>j.role==='judge').length===1){ $("#scoreJudge").value=JUDGES.find(j=>j.role==='judge').id; }
+  updateScoreHelper(); const jid=currentJudgeId();
+  if(jid) openScoresheet(team.id,jid); else toast("Select which judge you are",true);
+}
+function renderScoreStatus(){
+  const wrap=$("#scoreStatus"); const cat=$("#scoreCategory").value, act=$("#scoreActivity").value;
+  if(!cat||!act){ wrap.innerHTML=""; return; }
+  let teams=TEAMS.filter(t=>t.category===cat&&t.activity===act);
+  if(!isAdmin()){ const mine=new Set(ASSIGN.filter(a=>a.judge_id===ME.id).map(a=>a.category+"::"+a.activity)); if(!mine.has(cat+"::"+act)){ wrap.innerHTML=""; return; } }
+  if(!teams.length){ wrap.innerHTML=`<div class="empty">No teams registered for this activity yet.</div>`; return; }
+  const jid=currentJudgeId();
+  const rows=teams.map(t=>{
+    const lbRow=LB.find(x=>x.team_id===t.id); const need=assignedJudgeIds(cat,act).length;
+    const mid = isAdmin()
+      ? `<span class="hint">${lbRow?lbRow.judges_scored:0}/${need} judges</span>`
+      : (MYSCORES[t.id]? `<span class="chip green">You scored · ${MYSCORES[t.id].total}</span>` : `<span class="chip amber">Not scored</span>`);
+    return `<tr><td><b style="font-family:'Space Grotesk';font-weight:600">${esc(t.name)}</b>${t.klass?`<br><span class="hint">${esc(t.klass)}</span>`:""}</td>
+      <td>${mid}</td>
+      <td style="text-align:right"><button class="btn ghost sm" data-quick="${t.id}">${(!isAdmin()&&MYSCORES[t.id])?"Edit":"Score"}</button></td></tr>`;
+  }).join("");
+  wrap.innerHTML=`<div class="panel pad"><div class="eyebrow" style="margin-bottom:12px">${isAdmin()?"Scoring progress":"My scoring status"} · ${esc(RUBRICS[cat].label)} → ${esc(rubricOf(cat,act).name)}</div>
+    <table class="crit"><tbody>${rows}</tbody></table></div>`;
+  wrap.querySelectorAll("[data-quick]").forEach(b=>b.addEventListener("click",()=>{ if(!jid){ toast("Select a judge first",true); return; } openScoresheet(b.dataset.quick,jid); }));
+}
+
+/* ---------- SCORESHEET ---------- */
+let MD={teamId:null,judgeId:null};
+async function openScoresheet(teamId,judgeId){
+  const team=TEAMS.find(t=>t.id===teamId); if(!team) return;
+  const r=rubricOf(team.category,team.activity); MD={teamId,judgeId};
+  $("#mdActivity").textContent=r.name+" · "+RUBRICS[team.category].label;
+  $("#mdTeam").textContent=team.name;
+  $("#mdJudge").textContent="Scoring as "+judgeName(judgeId)+(team.klass?` · ${team.klass}`:"");
+  let existing={};
+  if(judgeId===(ME&&ME.id)){ existing=(MYSCORES[teamId]&&MYSCORES[teamId].criteria)||{}; }
+  else if(isAdmin()){ const {data}=await sb.from("scores").select("criteria").match({team_id:teamId,judge_id:judgeId}).maybeSingle(); existing=(data&&data.criteria)||{}; }
+  const rowsHtml=r.criteria.map(c=>`<tr><td><b style="font-weight:600">${esc(c.name)}</b></td>
+    <td class="cdesc">${esc(c.desc)}</td><td class="maxcell">/ ${c.max}</td>
+    <td><input type="number" min="0" max="${c.max}" step="1" data-cid="${c.id}" data-max="${c.max}" value="${existing[c.id]!=null?existing[c.id]:""}" placeholder="0"></td></tr>`).join("");
+  $("#mdBody").innerHTML=`<table class="crit"><thead><tr><th>Criteria</th><th>What to look for</th><th>Max</th><th>Score</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+    <div class="totalbar"><div><div class="lbl">Running total</div></div><div style="text-align:right"><span class="big" id="mdTotal">0</span><span style="opacity:.7;font-family:'Space Grotesk'"> / ${r.total}</span></div></div>`;
+  const inputs=[...$("#mdBody").querySelectorAll("input[type=number]")];
+  const recompute=()=>{ let sum=0,bad=false; inputs.forEach(inp=>{const max=+inp.dataset.max;let v=inp.value===""?0:Number(inp.value);if(isNaN(v))v=0;if(v<0){inp.value=0;v=0;}if(v>max){inp.classList.add("bad");bad=true;}else inp.classList.remove("bad");sum+=Math.min(v,max);});
+    $("#mdTotal").textContent=Math.round(sum*100)/100; $("#mdWarn").innerHTML=bad?`<span style="color:var(--red)">Some scores exceed their maximum.</span>`:""; };
+  inputs.forEach(inp=>inp.addEventListener("input",recompute)); recompute(); openModal();
+}
+$("#mdSave").addEventListener("click",async()=>{
+  const team=TEAMS.find(t=>t.id===MD.teamId); if(!team) return;
+  const inputs=[...$("#mdBody").querySelectorAll("input[type=number]")];
+  let obj={},sum=0,bad=false;
+  inputs.forEach(inp=>{const cid=inp.dataset.cid,max=+inp.dataset.max;let v=inp.value===""?0:Number(inp.value);if(isNaN(v)||v<0)v=0;if(v>max)bad=true;v=Math.min(v,max);obj[cid]=v;sum+=v;});
+  if(bad){ toast("Fix scores above their maximum",true); return; }
+  const total=Math.round(sum*100)/100; $("#mdSave").disabled=true;
+  try{
+    await sb.from("scores").upsert({team_id:MD.teamId,judge_id:MD.judgeId,criteria:obj,total,updated_at:new Date().toISOString()},{onConflict:"team_id,judge_id"});
+    if(MD.judgeId===(ME&&ME.id)) MYSCORES[MD.teamId]={criteria:obj,total};
+    await loadLeaderboard(); closeModal(); renderLbStats();
+    const active=document.querySelector("#tabs button.active"); renderActiveTab(active?active.dataset.tab:"score");
+    toast("Score saved for "+team.name);
+  }catch(err){ toast("Couldn't save score — "+friendly(err),true); }
+  finally{ $("#mdSave").disabled=false; }
+});
+$("#mdClose").addEventListener("click",closeModal);
+$("#mdCancel").addEventListener("click",closeModal);
+$("#scrim").addEventListener("click",e=>{ if(e.target===$("#scrim")) closeModal(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
+function openModal(){ $("#scrim").classList.add("open"); }
+function closeModal(){ $("#scrim").classList.remove("open"); }
+
+/* ---------- LEADERBOARD ---------- */
+let lbWired=false;
+function renderLeaderboard(){
+  if(!lbWired){ lbWired=true; wireCatActivity($("#lbCategory"),$("#lbActivity"));
+    $("#lbCategory").addEventListener("change",renderLeaderboard); $("#lbActivity").addEventListener("change",renderLeaderboard); }
+  const cat=$("#lbCategory").value, act=$("#lbActivity").value; const board=$("#board");
+  let rows=LB.filter(x=>x.category===cat&&x.activity===act);
+  $("#lbCountChip").textContent=`${rows.length} team${rows.length===1?"":"s"}`;
+  if(!rows.length){ board.innerHTML=`<div class="empty">No teams in <b>${esc((RUBRICS[cat]||{}).label||"")} → ${esc((rubricOf(cat,act)||{}).name||"")}</b> yet.</div>`; renderClassAgg(); return; }
+  const total=rubricOf(cat,act).total;
+  const revealed=rows.filter(x=>x.is_complete).sort((a,b)=>b.avg_score-a.avg_score);
+  const hidden=rows.filter(x=>!x.is_complete).sort((a,b)=>a.team_name.localeCompare(b.team_name));
+  const ordered=[...revealed,...hidden]; board.innerHTML="";
+  ordered.forEach((x,i)=>{
+    const isRev=x.is_complete; const rank=isRev?(i+1):null; const assigned=assignedJudgeIds(cat,act);
+    const dots=assigned.length? assigned.map((_,k)=>`<span class="jdot ${k<x.judges_scored?'done':'pending'}"></span>`).join("") : `<span class="hint" style="font-size:11px">no judges assigned</span>`;
+    const pct=isRev? Math.round(x.avg_score/total*100) : Math.round((x.judges_needed? x.judges_scored/x.judges_needed:0)*100);
+    const scoreCell=isRev
+      ? `<div class="score-num">${Number(x.avg_score).toFixed(2)}<small> / ${total}</small></div><div class="score-label">Avg · ${x.judges_scored} judge${x.judges_scored>1?"s":""}</div>`
+      : `<div class="score-num" style="font-size:19px">🔒 Hidden</div><div class="score-label">${x.judges_scored}/${x.judges_needed||0} judges in</div>`;
+    const row=document.createElement("div"); row.className="lb-row"+(isRev&&rank<=3?` r${rank}`:"")+(isRev?"":" locked");
+    row.innerHTML=`<div class="rankwrap"><div class="ranknum">${isRev?rank:"·"}</div></div>
+      <div><div class="team-name">${esc(x.team_name)}</div>
+        <div class="team-meta">${x.klass?`<span class="chip gray">${esc(x.klass)}</span>`:""}${isRev?`<span class="chip green">Complete</span>`:`<span class="chip amber">Awaiting judges</span>`}</div>
+        <div class="judge-track">${dots}</div><div class="prog"><i style="width:${pct}%"></i></div></div>
+      <div class="score-cell">${scoreCell}</div>`;
+    board.appendChild(row);
+  });
+  renderClassAgg();
+}
+function renderClassAgg(){
+  const wrap=$("#classAggWrap"); if(!wrap||!isAdmin()) return;
+  const cat=$("#lbCategory").value, act=$("#lbActivity").value;
+  const rows=LB.filter(x=>x.category===cat&&x.activity===act);
+  if(!rows.length){ wrap.innerHTML=""; return; }
+  const byClass={}; rows.forEach(x=>{ const k=x.klass||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
+  const total=rubricOf(cat,act).total;
+  const cards=Object.keys(byClass).sort().map(k=>{
+    const arr=byClass[k]; const complete=arr.filter(x=>x.is_complete); const allDone=complete.length===arr.length;
+    const sum=complete.reduce((a,b)=>a+Number(b.avg_score),0); const classScore=arr.length?(sum/arr.length):0;
+    return `<div class="card"><div class="cat-tag">${esc(k)}</div>
+      <h3>${allDone? classScore.toFixed(2):"—"} <small style="font-weight:500;color:var(--ink-soft);font-size:13px">/ ${total}</small></h3>
+      <div class="meta">${complete.length}/${arr.length} teams complete</div>
+      <div class="meta">Sum of team scores ÷ ${arr.length} team${arr.length>1?"s":""}</div>
+      ${allDone?`<span class="chip green">Class score final</span>`:`<span class="chip amber">Pending teams</span>`}</div>`;
+  }).join("");
+  wrap.innerHTML=`<div class="eyebrow" style="margin-bottom:12px">Class aggregate · ${esc(RUBRICS[cat].label)} → ${esc(rubricOf(cat,act).name)}</div>
+    <div class="hint" style="margin:-4px 0 14px">Mirrors the primary/secondary rule: a class's score is the sum of its team scores divided by the number of teams. Finalised once all teams in the class are complete.</div>
+    <div class="grid">${cards}</div>`;
+}
+function renderLbStats(){
+  const totalTeams=TEAMS.length; const totalJudges=JUDGES.filter(j=>j.role==="judge").length;
+  const complete=LB.filter(x=>x.is_complete).length; const scoresLogged=LB.reduce((a,b)=>a+(b.judges_scored||0),0);
+  $("#lbStats").innerHTML=`<div class="stat"><div class="n">${totalTeams}</div><div class="l">Teams</div></div>
+    <div class="stat"><div class="n">${isAdmin()?totalJudges:"—"}</div><div class="l">Judges</div></div>
+    <div class="stat"><div class="n">${complete}</div><div class="l">Fully Scored</div></div>
+    <div class="stat"><div class="n">${scoresLogged}</div><div class="l">Scores Logged</div></div>`;
+}
+$("#refreshLb").addEventListener("click",async()=>{ await Promise.all([loadLeaderboard(),loadTeams(),loadAssign()]); renderLeaderboard(); renderLbStats(); toast("Refreshed"); });
+
+$("#csvBtn")&&$("#csvBtn").addEventListener("click",()=>{
+  if(!LB.length){ toast("Nothing to export yet",true); return; }
+  const headers=["Category","Activity","Team","Class","JudgesNeeded","JudgesScored","Complete","AverageScore","MaxScore"];
+  const lines=[headers.join(",")];
+  LB.slice().sort((a,b)=> a.category.localeCompare(b.category)||a.activity.localeCompare(b.activity)|| ((b.avg_score||0)-(a.avg_score||0)))
+    .forEach(x=>{ const r=rubricOf(x.category,x.activity);
+      const cells=[(RUBRICS[x.category]||{}).label||x.category, r?r.name:x.activity, x.team_name, x.klass||"", x.judges_needed, x.judges_scored, x.is_complete?"Yes":"No", x.is_complete?Number(x.avg_score).toFixed(2):"hidden", r?r.total:""]
+        .map(v=>{ v=String(v); return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v; });
+      lines.push(cells.join(",")); });
+  const blob=new Blob([lines.join("\n")],{type:"text/csv"}); const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download="stem-expo-2026-results.csv"; a.click(); URL.revokeObjectURL(url); toast("CSV downloaded");
+});
+$("#printBtn").addEventListener("click",()=>window.print());
+
+/* ---------- RUBRIC REFERENCE ---------- */
+function renderRubricRef(){
+  const wrap=$("#rubricRef"); if(!wrap) return; wrap.innerHTML="";
+  if(isAdmin()){ const note=document.createElement("div"); note.className="note"; note.style.marginBottom="20px";
+    note.innerHTML=`<span>⚙️</span><div>All data lives in your Supabase project (cloud). Judges see only their own scoring; you see everything. Manage logins under the Judges tab.</div>`; wrap.appendChild(note); }
+  catList().forEach(c=>{
+    const block=document.createElement("div"); block.style.marginBottom="22px";
+    block.innerHTML=`<div class="eyebrow" style="margin-bottom:12px">${esc(c.label)}</div>`;
+    const grid=document.createElement("div"); grid.className="grid";
+    actList(c.key).forEach(a=>{ const r=rubricOf(c.key,a.key);
+      const crit=r.criteria.map(cr=>`<tr><td style="padding:5px 0;border:none">${esc(cr.name)}</td><td class="maxcell" style="padding:5px 0;border:none;text-align:right">${cr.max}</td></tr>`).join("");
+      const card=document.createElement("div"); card.className="card";
+      card.innerHTML=`<h3>${esc(r.name)}</h3><div class="meta">Scored out of <b>${r.total}</b></div>
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px;color:var(--ink-soft);margin-top:4px">${crit}</table>`;
+      grid.appendChild(card);
+    });
+    block.appendChild(grid); wrap.appendChild(block);
+  });
+}
+
+/* ---------- BOOT ---------- */
+(async function init(){
+  if(!CONFIGURED){ $("#configWarn").style.display=""; return; }
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){ await afterLogin(); }
+})();
+</script>
+</body>
+</html>
