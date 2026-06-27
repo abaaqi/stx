@@ -148,7 +148,7 @@ const CONFIGURED = !/YOUR_SUPABASE/.test(SUPABASE_URL+SUPABASE_ANON_KEY);
 /* ---- The same rubric labels, so the dropdowns read nicely ---- */
 const RUBRICS = {
   PRE:{ label:"Preschool", activities:{
-    project:{name:"Project-Based Activity",total:50},
+    project:{name:"Project-Based Activity",total:60},
     beebot:{name:"Bee-Bot Coding Competition",total:50},
     lego:{name:"LEGO Coupling Challenge",total:50},
     rubik:{name:"Face-Changing Rubik Challenge",total:50},
@@ -227,8 +227,8 @@ function render(){
 }
 
 function renderClassMode(cat,rows,board){
-  const acts=actList(cat); const total=(acts[0]&&acts[0].total)||100;
   const groupByName = (cat==="PRE");
+  const maxOf = (x)=> (rubricOf(x.category,x.activity)||{}).total || 100;
   const byClass={};
   rows.forEach(x=>{
     const k = groupByName
@@ -244,21 +244,22 @@ function renderClassMode(cat,rows,board){
     const arr=byClass[k]; const complete=arr.filter(x=>x.is_complete);
     const allDone=complete.length===arr.length&&arr.length>0;
     const avg=complete.length? complete.reduce((a,b)=>a+Number(b.avg_score),0)/arr.length : 0;
-    return {klass:k,teams:arr,teamsDone:complete.length,teamsTotal:arr.length,allDone,avg};
+    const total = arr.length? (arr.reduce((s,x)=>s+maxOf(x),0)/arr.length) : 100;
+    return {klass:k,teams:arr,teamsDone:complete.length,teamsTotal:arr.length,allDone,avg,total};
   });
   const revealed=recs.filter(r=>r.allDone).sort((a,b)=>b.avg-a.avg);
   const pending=recs.filter(r=>!r.allDone).sort((a,b)=>a.klass.localeCompare(b.klass));
   const ordered=[...revealed,...pending]; board.innerHTML="";
   ordered.forEach((r,i)=>{
     const isRev=r.allDone; const rank=isRev?(i+1):null;
-    const pct=isRev? Math.round(r.avg/total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
+    const pct=isRev? Math.round(r.avg/r.total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
     const teamLines=r.teams.map(t=>{ const s=t.is_complete? Number(t.avg_score).toFixed(1):"—";
       const an=(rubricOf(t.category,t.activity)||{}).name||t.activity;
       const label = groupByName ? esc(an) : (esc(t.team_name)+" · "+esc(an));
       return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${label}: ${s}</span>`; }).join(" ");
     const unitWord = groupByName ? "track" : "team";
     const scoreCell=isRev
-      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">${groupByName?"Group":"Class"} avg · ${r.teamsTotal} ${unitWord}${r.teamsTotal>1?"s":""}</div>`
+      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${Math.round(r.total)}</small></div><div class="score-label">${groupByName?"Group":"Class"} avg · ${r.teamsTotal} ${unitWord}${r.teamsTotal>1?"s":""}</div>`
       : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} ${unitWord}s in</div>`;
     const row=document.createElement("div"); row.className="lb-row"+(isRev&&rank<=3?` r${rank}`:"")+(isRev?"":" locked");
     row.innerHTML=`<div class="rankwrap"><div class="ranknum">${isRev?rank:"·"}</div></div>
