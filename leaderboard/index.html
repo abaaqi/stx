@@ -183,7 +183,7 @@ async function loadLeaderboard(){
 
 // Categories ranked class-vs-class (combine a class's teams, score = average).
 // Preschool (PRE) and Senior Secondary (SS) stay team-vs-team.
-const CLASS_RANKED = new Set(["LP","UP","JS"]);
+const CLASS_RANKED = new Set(["PRE","LP","UP","JS"]);
 
 function render(){
   const cat=$("#lbCategory").value, act=$("#lbActivity").value;
@@ -227,7 +227,7 @@ function render(){
 }
 
 function renderClassMode(cat,rows,board){
-  const total=100;
+  const acts=actList(cat); const total=(acts[0]&&acts[0].total)||100;
   const byClass={};
   rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
   const classes=Object.keys(byClass);

@@ -776,7 +776,7 @@ function closeModal(){ $("#scrim").classList.remove("open"); }
 let lbWired=false;
 /* Categories where ranking is CLASS vs CLASS (combine a class's teams into one
    entry, scored as the average of those teams). Preschool & SS stay team vs team. */
-const CLASS_RANKED = new Set(["LP","UP","JS"]);
+const CLASS_RANKED = new Set(["PRE","LP","UP","JS"]);
 
 function renderLeaderboard(){
   if(!lbWired){ lbWired=true; wireCatActivity($("#lbCategory"),$("#lbActivity"));
@@ -827,7 +827,8 @@ function renderLeaderboard(){
    Combines ALL of a class's teams across every track into a single entry,
    scored as the average of those teams. Activity/track is ignored. */
 function renderClassLeaderboard(cat,rows,board){
-  const total=100; // all class-ranked categories score out of 100
+  // total per team is the category's per-activity max (Preschool=50, others=100)
+  const acts=actList(cat); const total=(acts[0]&&acts[0].total)||100;
   // group every team in the category by class
   const byClass={};
   rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
