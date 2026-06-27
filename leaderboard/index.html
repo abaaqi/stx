@@ -228,11 +228,18 @@ function render(){
 
 function renderClassMode(cat,rows,board){
   const acts=actList(cat); const total=(acts[0]&&acts[0].total)||100;
+  const groupByName = (cat==="PRE");
   const byClass={};
-  rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
+  rows.forEach(x=>{
+    const k = groupByName
+      ? ((x.team_name&&x.team_name.trim())||"— (no name)")
+      : ((x.klass&&x.klass.trim())||"— (no class set)");
+    (byClass[k]=byClass[k]||[]).push(x);
+  });
   const classes=Object.keys(byClass);
-  $("#countChip").textContent=`${classes.length} class${classes.length===1?"":"es"}`;
-  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
+  const unit = groupByName ? "group" : "class";
+  $("#countChip").textContent=`${classes.length} ${unit}${classes.length===1?"":(groupByName?"s":"es")}`;
+  if(!classes.length){ board.innerHTML=`<div class="empty">No ${unit}s in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
   const recs=classes.map(k=>{
     const arr=byClass[k]; const complete=arr.filter(x=>x.is_complete);
     const allDone=complete.length===arr.length&&arr.length>0;
@@ -247,10 +254,12 @@ function renderClassMode(cat,rows,board){
     const pct=isRev? Math.round(r.avg/total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
     const teamLines=r.teams.map(t=>{ const s=t.is_complete? Number(t.avg_score).toFixed(1):"—";
       const an=(rubricOf(t.category,t.activity)||{}).name||t.activity;
-      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)} · ${esc(an)}: ${s}</span>`; }).join(" ");
+      const label = groupByName ? esc(an) : (esc(t.team_name)+" · "+esc(an));
+      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${label}: ${s}</span>`; }).join(" ");
+    const unitWord = groupByName ? "track" : "team";
     const scoreCell=isRev
-      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">Class avg · ${r.teamsTotal} team${r.teamsTotal>1?"s":""}</div>`
-      : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} teams in</div>`;
+      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">${groupByName?"Group":"Class"} avg · ${r.teamsTotal} ${unitWord}${r.teamsTotal>1?"s":""}</div>`
+      : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} ${unitWord}s in</div>`;
     const row=document.createElement("div"); row.className="lb-row"+(isRev&&rank<=3?` r${rank}`:"")+(isRev?"":" locked");
     row.innerHTML=`<div class="rankwrap"><div class="ranknum">${isRev?rank:"·"}</div></div>
       <div><div class="team-name">${esc(r.klass)}</div>

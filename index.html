@@ -829,12 +829,19 @@ function renderLeaderboard(){
 function renderClassLeaderboard(cat,rows,board){
   // total per team is the category's per-activity max (Preschool=50, others=100)
   const acts=actList(cat); const total=(acts[0]&&acts[0].total)||100;
-  // group every team in the category by class
+  // Preschool groups by TEAM NAME; the others group by CLASS label.
+  const groupByName = (cat==="PRE");
   const byClass={};
-  rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
+  rows.forEach(x=>{
+    const k = groupByName
+      ? ((x.team_name&&x.team_name.trim())||"— (no name)")
+      : ((x.klass&&x.klass.trim())||"— (no class set)");
+    (byClass[k]=byClass[k]||[]).push(x);
+  });
   const classes=Object.keys(byClass);
-  $("#lbCountChip").textContent=`${classes.length} class${classes.length===1?"":"es"}`;
-  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
+  const unit = groupByName ? "group" : "class";
+  $("#lbCountChip").textContent=`${classes.length} ${unit}${classes.length===1?"":(groupByName?"s":"es")}`;
+  if(!classes.length){ board.innerHTML=`<div class="empty">No ${unit}s in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
 
   // build a record per class: complete only when ALL its teams (any track) are complete
   const recs=classes.map(k=>{
@@ -851,15 +858,18 @@ function renderClassLeaderboard(cat,rows,board){
   ordered.forEach((r,i)=>{
     const isRev=r.allDone; const rank=isRev?(i+1):null;
     const pct=isRev? Math.round(r.avg/total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
-    // list contributing teams (name + track + score or pending)
+    // list contributing entries. When grouped by name (Preschool) the name is
+    // the same across them, so show the TRACK; otherwise show team name + track.
     const teamLines=r.teams.map(t=>{
       const s=t.is_complete? Number(t.avg_score).toFixed(1) : "—";
       const an=(rubricOf(t.category,t.activity)||{}).name||t.activity;
-      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)} · ${esc(an)}: ${s}</span>`;
+      const label = groupByName ? esc(an) : (esc(t.team_name)+" · "+esc(an));
+      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${label}: ${s}</span>`;
     }).join(" ");
+    const unitWord = groupByName ? "track" : "team";
     const scoreCell=isRev
-      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">Class avg · ${r.teamsTotal} team${r.teamsTotal>1?"s":""}</div>`
-      : `<div class="score-num" style="font-size:19px">🔒 Hidden</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} teams in</div>`;
+      ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">${groupByName?"Group":"Class"} avg · ${r.teamsTotal} ${unitWord}${r.teamsTotal>1?"s":""}</div>`
+      : `<div class="score-num" style="font-size:19px">🔒 Hidden</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} ${unitWord}s in</div>`;
     const row=document.createElement("div"); row.className="lb-row"+(isRev&&rank<=3?` r${rank}`:"")+(isRev?"":" locked");
     row.innerHTML=`<div class="rankwrap"><div class="ranknum">${isRev?rank:"·"}</div></div>
       <div><div class="team-name">${esc(r.klass)}</div>
