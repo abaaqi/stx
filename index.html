@@ -782,10 +782,22 @@ function renderLeaderboard(){
   if(!lbWired){ lbWired=true; wireCatActivity($("#lbCategory"),$("#lbActivity"));
     $("#lbCategory").addEventListener("change",renderLeaderboard); $("#lbActivity").addEventListener("change",renderLeaderboard); }
   const cat=$("#lbCategory").value, act=$("#lbActivity").value; const board=$("#board");
+
+  if(CLASS_RANKED.has(cat)){
+    // Class-vs-class IGNORES the activity/track: combine every team in the class
+    // across all tracks into one ranked entry (average of all its team scores).
+    const catRows=LB.filter(x=>x.category===cat);
+    // The track selector is meaningless here, so disable it.
+    const actSel=$("#lbActivity"); if(actSel){ actSel.disabled=true; actSel.style.opacity=.5; }
+    renderClassLeaderboard(cat,catRows,board);
+    renderClassAgg();
+    return;
+  } else {
+    const actSel=$("#lbActivity"); if(actSel){ actSel.disabled=false; actSel.style.opacity=1; }
+  }
+
   const rows=LB.filter(x=>x.category===cat&&x.activity===act);
   const total=(rubricOf(cat,act)||{}).total||100;
-
-  if(CLASS_RANKED.has(cat)){ renderClassLeaderboard(cat,act,rows,total,board); renderClassAgg(); return; }
 
   // ---- TEAM vs TEAM (Preschool, Senior Secondary) ----
   $("#lbCountChip").textContent=`${rows.length} team${rows.length===1?"":"s"}`;
@@ -811,16 +823,19 @@ function renderLeaderboard(){
   renderClassAgg();
 }
 
-/* ---- CLASS vs CLASS ranking (Lower/Upper Primary, JSS) ---- */
-function renderClassLeaderboard(cat,act,rows,total,board){
-  // group this activity's teams by class
+/* ---- CLASS vs CLASS ranking (Lower/Upper Primary, JSS) ----
+   Combines ALL of a class's teams across every track into a single entry,
+   scored as the average of those teams. Activity/track is ignored. */
+function renderClassLeaderboard(cat,rows,board){
+  const total=100; // all class-ranked categories score out of 100
+  // group every team in the category by class
   const byClass={};
   rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
   const classes=Object.keys(byClass);
   $("#lbCountChip").textContent=`${classes.length} class${classes.length===1?"":"es"}`;
-  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")} → ${esc((rubricOf(cat,act)||{}).name||"")}</b> yet.</div>`; return; }
+  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
 
-  // build a record per class: complete only when ALL its teams are complete
+  // build a record per class: complete only when ALL its teams (any track) are complete
   const recs=classes.map(k=>{
     const arr=byClass[k];
     const complete=arr.filter(x=>x.is_complete);
@@ -835,10 +850,11 @@ function renderClassLeaderboard(cat,act,rows,total,board){
   ordered.forEach((r,i)=>{
     const isRev=r.allDone; const rank=isRev?(i+1):null;
     const pct=isRev? Math.round(r.avg/total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
-    // list contributing teams (name + score or pending)
+    // list contributing teams (name + track + score or pending)
     const teamLines=r.teams.map(t=>{
       const s=t.is_complete? Number(t.avg_score).toFixed(1) : "—";
-      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)}: ${s}</span>`;
+      const an=(rubricOf(t.category,t.activity)||{}).name||t.activity;
+      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)} · ${esc(an)}: ${s}</span>`;
     }).join(" ");
     const scoreCell=isRev
       ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">Class avg · ${r.teamsTotal} team${r.teamsTotal>1?"s":""}</div>`

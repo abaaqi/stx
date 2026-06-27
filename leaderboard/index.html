@@ -187,10 +187,21 @@ const CLASS_RANKED = new Set(["LP","UP","JS"]);
 
 function render(){
   const cat=$("#lbCategory").value, act=$("#lbActivity").value;
-  const rows=LB.filter(x=>x.category===cat&&x.activity===act);
-  const board=$("#board"); const r=rubricOf(cat,act); const total=r?r.total:100;
+  const board=$("#board");
 
-  if(CLASS_RANKED.has(cat)){ renderClassMode(cat,act,rows,total,board); renderStats(); return; }
+  if(CLASS_RANKED.has(cat)){
+    // Ignore the track: combine every team in the class across all activities.
+    const catRows=LB.filter(x=>x.category===cat);
+    const actSel=$("#lbActivity"); if(actSel){ actSel.disabled=true; actSel.style.opacity=.5; }
+    renderClassMode(cat,catRows,board);
+    renderStats();
+    return;
+  } else {
+    const actSel=$("#lbActivity"); if(actSel){ actSel.disabled=false; actSel.style.opacity=1; }
+  }
+
+  const rows=LB.filter(x=>x.category===cat&&x.activity===act);
+  const r=rubricOf(cat,act); const total=r?r.total:100;
 
   // ---- TEAM vs TEAM (Preschool, Senior Secondary) ----
   $("#countChip").textContent=`${rows.length} team${rows.length===1?"":"s"}`;
@@ -215,12 +226,13 @@ function render(){
   renderStats();
 }
 
-function renderClassMode(cat,act,rows,total,board){
+function renderClassMode(cat,rows,board){
+  const total=100;
   const byClass={};
   rows.forEach(x=>{ const k=(x.klass&&x.klass.trim())||"— (no class set)"; (byClass[k]=byClass[k]||[]).push(x); });
   const classes=Object.keys(byClass);
   $("#countChip").textContent=`${classes.length} class${classes.length===1?"":"es"}`;
-  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")} → ${esc((rubricOf(cat,act)||{}).name||"")}</b> yet.</div>`; return; }
+  if(!classes.length){ board.innerHTML=`<div class="empty">No classes in <b>${esc((RUBRICS[cat]||{}).label||"")}</b> yet.</div>`; return; }
   const recs=classes.map(k=>{
     const arr=byClass[k]; const complete=arr.filter(x=>x.is_complete);
     const allDone=complete.length===arr.length&&arr.length>0;
@@ -234,7 +246,8 @@ function renderClassMode(cat,act,rows,total,board){
     const isRev=r.allDone; const rank=isRev?(i+1):null;
     const pct=isRev? Math.round(r.avg/total*100) : Math.round((r.teamsTotal? r.teamsDone/r.teamsTotal:0)*100);
     const teamLines=r.teams.map(t=>{ const s=t.is_complete? Number(t.avg_score).toFixed(1):"—";
-      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)}: ${s}</span>`; }).join(" ");
+      const an=(rubricOf(t.category,t.activity)||{}).name||t.activity;
+      return `<span class="chip ${t.is_complete?'gray':'amber'}" style="font-weight:500">${esc(t.team_name)} · ${esc(an)}: ${s}</span>`; }).join(" ");
     const scoreCell=isRev
       ? `<div class="score-num">${r.avg.toFixed(2)}<small> / ${total}</small></div><div class="score-label">Class avg · ${r.teamsTotal} team${r.teamsTotal>1?"s":""}</div>`
       : `<div class="score-num" style="font-size:20px">Pending</div><div class="score-label">${r.teamsDone}/${r.teamsTotal} teams in</div>`;
